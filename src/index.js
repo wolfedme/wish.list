@@ -1,8 +1,12 @@
+/* eslint-disable no-undef */
+/* eslint-disable react/jsx-filename-extension */
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+
+import './globals/i18n/i18n';
 
 ReactDOM.render(
   <React.StrictMode>
