@@ -1,3 +1,6 @@
 {
-  "appTitle": "wish.list"
+  "appTitle": "wish.list",
+  "button": {
+    "reserve": "Reservieren"
+  }
 }

@@ -4,13 +4,14 @@ import PropTypes from 'prop-types';
 
 const HeaderBar = ({ title }) => {
   return (
-    <div>
-      <AppBar>
+    <>
+      <AppBar position="sticky">
         <Toolbar>
           <Typography variant="h6">{title}</Typography>
         </Toolbar>
       </AppBar>
-    </div>
+      <Toolbar />
+    </>
   );
 };
 
