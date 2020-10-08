@@ -6,4 +6,6 @@ export type TProduct = {
   link: string;
   price: number;
   imgUrl: string;
+  isReserved: boolean;
+  reservedBy?: string;
 };
