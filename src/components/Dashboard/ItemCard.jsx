@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */ // TODO: Prop Types
 import React from 'react';
 import {
   Card,
@@ -13,14 +14,16 @@ import {
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-const ItemCard = (product, { imgHeight = 200 }) => {
+const ItemCard = ({ product, imgHeight = 200 }) => {
   const { t } = useTranslation();
 
   // TODO: Change Price Tag to "available / not available and move price elsewhere"
 
+  // TODO: Crop Description with read-more
+
   return (
     <>
-      <Card>
+      <StyledCard>
         <CardActionArea>
           <PriceTag color="secondary" size="large">
             <Typography variant="h6">{product.price}€</Typography>
@@ -32,14 +35,14 @@ const ItemCard = (product, { imgHeight = 200 }) => {
             image={product.imgUrl}
             title={product.name}
           />
-          <CardContent>
+          <FixedContentHeight>
             <Typography gutterBottom variant="h5" component="h2">
               {product.name}
             </Typography>
             <Typography variant="body2" color="textPrimary" component="p">
               {product.description}
             </Typography>
-          </CardContent>
+          </FixedContentHeight>
         </CardActionArea>
         <CardActions disableSpacing>
           <Button size="small" color="primary">
@@ -57,7 +60,7 @@ const ItemCard = (product, { imgHeight = 200 }) => {
             {product.isReserved ? t('button.isReserved') : t('button.reserve')}
           </ReserveButton>
         </CardActions>
-      </Card>
+      </StyledCard>
     </>
   );
 };
@@ -72,6 +75,15 @@ const PriceTag = styled(Fab)`
   position: absolute;
   margin: 10px;
   right: 0;
+`;
+
+const StyledCard = styled(Card)`
+  width: 500px;
+`; // TODO: Full Width on Mobile, not full on Desktop
+
+const FixedContentHeight = styled(CardContent)`
+  height: 200px;
+  overflow-y: hidden;
 `;
 
 export default ItemCard;
