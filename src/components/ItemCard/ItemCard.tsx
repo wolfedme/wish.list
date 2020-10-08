@@ -14,7 +14,7 @@ import {
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { TProduct } from '../../common/TProduct';
+import { TProduct } from '../../common/types/TProduct';
 
 const ItemCard = (product: TProduct, { imgHeight = 200 }) => {
   const { t } = useTranslation();
