@@ -1,0 +1,20 @@
+// Database Structure
+{
+  "wishlist-21f325g": {
+    "products": {
+      //ProductList
+    },
+    "users": {
+      //UserList (unique IDs per Cookie)
+    },
+    "settings": {
+      "admin": {
+        "credentials": {
+          "username": "admin",
+          "password": "ENCRYPTED!" //TODO: Check Login Actions with Firebase
+        }
+      }
+      // TODO: More settings
+    }
+  }
+}
