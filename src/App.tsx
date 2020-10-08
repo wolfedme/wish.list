@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next';
 import lightTheme from './globals/theme/lightTheme';
 import darkTheme from './globals/theme/darkTheme';
 
-import Dashboard from './components/layout/dashboard/Dashboard';
+import Dashboard from './components/pages/dashboard/Dashboard';
 import { TProduct } from './common/types/TProduct';
 
 function App() {
