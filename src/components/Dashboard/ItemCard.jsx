@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import {
   Card,
   CardActionArea,
@@ -14,10 +13,10 @@ import {
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-import { TProduct } from '../../common/types/TProduct';
-
-const ItemCard = (product: TProduct, { imgHeight = 200 }) => {
+const ItemCard = (product, { imgHeight = 200 }) => {
   const { t } = useTranslation();
+
+  // TODO: Change Price Tag to "available / not available and move price elsewhere"
 
   return (
     <>
@@ -25,8 +24,7 @@ const ItemCard = (product: TProduct, { imgHeight = 200 }) => {
         <CardActionArea>
           <PriceTag color="secondary" size="large">
             <Typography variant="h6">{product.price}€</Typography>
-          </PriceTag>{' '}
-          //TODO: Change to "available / not available and move price elsewhere"
+          </PriceTag>
           <CardMedia
             component="img"
             alt={product.name}
@@ -65,14 +63,6 @@ const ItemCard = (product: TProduct, { imgHeight = 200 }) => {
 };
 
 // TODO: Fixed Size!!!
-
-ItemCard.defaultProps = {
-  imgHeight: 300, // TODO: Height by screen size?
-};
-
-ItemCard.propTypes = {
-  imgHeight: PropTypes.number,
-};
 
 const ReserveButton = styled(Button)`
   margin-left: auto;

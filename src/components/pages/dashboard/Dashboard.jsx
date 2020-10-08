@@ -1,10 +1,12 @@
+/* eslint-disable react/jsx-props-no-spreading */
+
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { TProduct } from '../../../common/types/TProduct';
-import ItemCard from '../../ItemCard/ItemCard';
-import ContentContainer from '../../layout/ContentContainer';
 
 import { Grid, Typography } from '@material-ui/core';
+import ItemCard from '../../Dashboard/ItemCard';
+import ContentContainer from '../../layout/ContentContainer';
+import LoadingSpinner from '../../general/LoadingSpinner';
 
 import HeaderBar from '../../layout/HeaderBar';
 
@@ -15,12 +17,13 @@ const Dashboard = () => {
   const { t } = useTranslation();
   const firebase = useContext(FirebaseContext);
 
-  const [productList, setProductList] = useState([]); //TODO!
+  const [productList, setProductList] = useState([]); // TODO!
+  const [isLoading, setLoading] = useState(false);
 
-  //TODO: Fetch newest Amazon Price?
-  //TODO Unique ID
+  // TODO: Fetch newest Amazon Price?
+  // TODO: Unique ID
 
-  //TODO Maybe migrate back to jsx
+  // TODO: Maybe migrate back to jsx
 
   const fetchItems = () => {
     console.log(firebase);
@@ -35,14 +38,14 @@ const Dashboard = () => {
     }
   };
 
-  const renderList = (productList) => {
+  const renderList = () => {
     console.log('rendering!');
-    return productList.map((x: TProduct) => (
+    return productList.map((x) => (
       <Grid item>
         <ItemCard {...x} imgHeight={150} />
       </Grid>
 
-      //TODO: Own component for productlist
+      // TODO: Own component for productlist
     ));
   };
 
@@ -53,7 +56,7 @@ const Dashboard = () => {
       <HeaderBar title={t('appTitle')} />
       <ContentContainer maxWidth="xl">
         <Grid container spacing={5} justify="center">
-          {productList.length <= 0 ? emptyList : renderList}
+          {isLoading ? <LoadingSpinner /> : productList.length <= 0 ? emptyList : renderList}
         </Grid>
         <DebugPanel />
       </ContentContainer>

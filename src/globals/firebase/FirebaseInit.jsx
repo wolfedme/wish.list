@@ -28,7 +28,6 @@ const devConfig = {
 const config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
 
 class Firebase {
-  db: any | null;
   constructor() {
     app.initializeApp(config);
 

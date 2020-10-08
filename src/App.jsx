@@ -11,8 +11,6 @@ import lightTheme from './globals/theme/lightTheme';
 import darkTheme from './globals/theme/darkTheme';
 
 import Dashboard from './components/pages/dashboard/Dashboard';
-import { TProduct } from './common/types/TProduct';
-import { FirebaseContext } from './globals/firebase';
 
 function App() {
   // I18N
