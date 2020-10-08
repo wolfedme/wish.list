@@ -25,7 +25,8 @@ const ItemCard = (product: TProduct, { imgHeight = 200 }) => {
         <CardActionArea>
           <PriceTag color="secondary" size="large">
             <Typography variant="h6">{product.price}€</Typography>
-          </PriceTag>
+          </PriceTag>{' '}
+          //TODO: Change to "available / not available and move price elsewhere"
           <CardMedia
             component="img"
             alt={product.name}
@@ -44,19 +45,26 @@ const ItemCard = (product: TProduct, { imgHeight = 200 }) => {
         </CardActionArea>
         <CardActions disableSpacing>
           <Button size="small" color="primary">
-            Share
+            {t('button.todo')}
           </Button>
           <Button size="small" color="primary">
-            Learn More
+            {t('button.todo')}
           </Button>
-          <ReserveButton size="large" color="primary" variant="contained">
-            {t('button.reserve')}
+          <ReserveButton
+            size="large"
+            color="primary"
+            variant="contained"
+            disabled={product.isReserved}
+          >
+            {product.isReserved ? t('button.isReserved') : t('button.reserve')}
           </ReserveButton>
         </CardActions>
       </Card>
     </>
   );
 };
+
+// TODO: Fixed Size!!!
 
 ItemCard.defaultProps = {
   imgHeight: 300, // TODO: Height by screen size?

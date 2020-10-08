@@ -12,6 +12,7 @@ import darkTheme from './globals/theme/darkTheme';
 
 import Dashboard from './components/pages/dashboard/Dashboard';
 import { TProduct } from './common/types/TProduct';
+import { FirebaseContext } from './globals/firebase';
 
 function App() {
   // I18N
@@ -27,36 +28,11 @@ function App() {
     }
   };
 
-  const debugProducts: Array<TProduct> = [];
-  const debugProduct1: TProduct = {
-    id: 1,
-    name: 'PRODUCT_NAME',
-    description: 'PRODUCT_DESCRIPTION',
-    price: 99.9,
-    vendor: 'unknown',
-    link: '#',
-    imgUrl: 'https://source.unsplash.com/random/800x600',
-    isReserved: false,
-  };
-  const debugProduct2: TProduct = {
-    id: 2,
-    name: 'PRODUCT_NAME',
-    description: 'PRODUCT_DESCRIPTION',
-    price: 99.9,
-    vendor: 'unknown',
-    link: '#',
-    imgUrl: 'https://source.unsplash.com/random/800x600',
-    isReserved: true,
-  };
-
-  debugProducts.push(debugProduct1);
-  debugProducts.push(debugProduct2);
-
   return (
     <>
       <CssBaseline />
       <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
-        <Dashboard products={debugProducts} />
+        <Dashboard />
       </ThemeProvider>
     </>
   );

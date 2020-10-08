@@ -1,5 +1,8 @@
 import app from 'firebase/app';
 
+import 'firebase/auth';
+import 'firebase/database';
+
 //TODO: Add to Readme - create .env file
 
 const prodConfig = {
@@ -25,8 +28,11 @@ const devConfig = {
 const config = process.env.NODE_ENV === 'production' ? prodConfig : devConfig;
 
 class Firebase {
+  db: any | null;
   constructor() {
     app.initializeApp(config);
+
+    this.db = app.database();
   }
 }
 
