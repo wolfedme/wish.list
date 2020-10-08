@@ -1,22 +1,17 @@
 import React, { useState } from 'react';
 import './App.css';
 
-import firebase from 'firebase/app';
 import { CssBaseline } from '@material-ui/core';
 
 import { ThemeProvider } from 'styled-components';
 
 import { useTranslation } from 'react-i18next';
 
-import firebaseConfig from './globals/firebase/config';
-
 import lightTheme from './globals/theme/lightTheme';
 import darkTheme from './globals/theme/darkTheme';
 
 import Dashboard from './components/layout/dashboard/Dashboard';
-import { TProduct } from './common/TProduct';
-
-firebase.initializeApp(firebaseConfig);
+import { TProduct } from './common/types/TProduct';
 
 function App() {
   // I18N
@@ -41,6 +36,7 @@ function App() {
     vendor: 'unknown',
     link: '#',
     imgUrl: 'https://source.unsplash.com/random/800x600',
+    isReserved: false,
   };
   const debugProduct2: TProduct = {
     id: 2,
@@ -50,6 +46,7 @@ function App() {
     vendor: 'unknown',
     link: '#',
     imgUrl: 'https://source.unsplash.com/random/800x600',
+    isReserved: true,
   };
 
   debugProducts.push(debugProduct1);
