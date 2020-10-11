@@ -5,20 +5,21 @@ import { CssBaseline } from '@material-ui/core';
 
 import { ThemeProvider } from 'styled-components';
 
-import { useTranslation } from 'react-i18next';
-
 import lightTheme from './globals/theme/lightTheme';
 import darkTheme from './globals/theme/darkTheme';
 
 import Dashboard from './components/pages/dashboard/Dashboard';
-import { LoggerContext } from './globals/logger';
+import { FirebaseContext } from './globals/firebase';
 
 function App() {
   // Contexts
-  const { t } = useTranslation();
-  const log = useContext(LoggerContext); // TODO: Change all console.logs to logger
+  // const { t } = useTranslation();
+  const firebase = useContext(FirebaseContext);
+  // const log = useContext(LoggerContext); // TODO: Change all console.logs to logger
 
+  // TODO: Make Theme a global variable (maybe assigned to a user)
   const [theme, setTheme] = useState('light');
+  // eslint-disable-next-line no-unused-vars
   const toggleTheme = () => {
     // Toggle between light & dark theme
     if (theme === 'light') {
@@ -27,6 +28,10 @@ function App() {
       setTheme('light');
     }
   };
+
+  useEffect(() => {
+    firebase.signInAnonymously(); // TODO: To promise
+  }, [firebase.auth.currentUser]);
 
   return (
     <>
@@ -39,5 +44,3 @@ function App() {
 }
 
 export default App;
-
-// TODO: Write tests!
