@@ -2,88 +2,84 @@
 import React from 'react';
 import {
   Card,
-  CardActionArea,
   CardMedia,
   CardContent,
   Typography,
   CardActions,
   Button,
-  Fab,
+  Grid,
 } from '@material-ui/core';
+
+import ShoppingBasketIcon from '@material-ui/icons/ShoppingBasket';
 
 import styled from 'styled-components';
 import { useTranslation } from 'react-i18next';
 
-const ItemCard = ({ product, imgHeight = 200 }) => {
+const ItemCard = ({ product }) => {
   const { t } = useTranslation();
 
-  // TODO: Change Price Tag to "available / not available and move price elsewhere"
+  const beautifyPrice = (price) => {
+    let num = Number(price);
+    let res = num.toString();
+    res = res.split('.');
+    if (res.length === 1 || res[1].length < 3) {
+      num = num.toFixed(2);
+    }
 
-  // TODO: Crop Description with read-more
+    let beautifiedPrice = num.toString();
+    beautifiedPrice = beautifiedPrice.replace('.', ',') + '€';
+    return beautifiedPrice;
+  };
 
   return (
-    <>
-      <StyledCard>
-        <CardActionArea>
-          <PriceTag color="secondary" size="large">
-            <Typography variant="h6">{product.price}€</Typography>
-          </PriceTag>
-          <CardMedia
-            component="img"
-            alt={product.name}
-            height={imgHeight}
-            image={product.imgUrl}
-            title={product.name}
-          />
-          <FixedContentHeight>
-            <Typography gutterBottom variant="h5" component="h2">
-              {product.name}
-            </Typography>
-            <Typography variant="body2" color="textPrimary" component="p">
-              {product.description}
-            </Typography>
-          </FixedContentHeight>
-        </CardActionArea>
-        <CardActions disableSpacing>
-          <Button size="small" color="primary">
-            {t('button.todo')}
-          </Button>
-          <Button size="small" color="primary">
-            {t('button.todo')}
-          </Button>
+    <GridItem item>
+      <ProductCard>
+        <ProductCardMedia image={product.imgUrl} />
+        <ProductTitleBox>
+          <Typography variant="h5" component="h2">
+            {product.name}
+          </Typography>
+          <Typography align="right" variant="h6" color="textSecondary" component="p">
+            {beautifyPrice(product.price)}
+          </Typography>
+        </ProductTitleBox>
+        <CardActions>
           <ReserveButton
-            size="large"
-            color="primary"
             variant="contained"
-            disabled={product.isReserved}
+            color="primary"
+            size="large"
+            startIcon={<ShoppingBasketIcon />}
           >
-            {product.isReserved ? t('button.isReserved') : t('button.reserve')}
+            {t('Button.Reserve')}
           </ReserveButton>
         </CardActions>
-      </StyledCard>
-    </>
+      </ProductCard>
+    </GridItem>
   );
 };
 
 // TODO: Fixed Size!!!
 
+const GridItem = styled(Grid)`
+  width: 100%;
+
+  ${(props) => props.theme.breakpoints.up('md')} {
+    width: 50%;
+  }
+  ${(props) => props.theme.breakpoints.up('lg')} {
+    width: 33.333333%;
+  }
+`;
+
+const ProductCard = styled(Card)``;
+const ProductCardMedia = styled(CardMedia)`
+  min-height: 300px;
+`;
+
+const ProductTitleBox = styled(CardContent)``;
+
 const ReserveButton = styled(Button)`
-  margin-left: auto;
-`;
-
-const PriceTag = styled(Fab)`
-  position: absolute;
-  margin: 10px;
-  right: 0;
-`;
-
-const StyledCard = styled(Card)`
-  width: 500px;
-`; // TODO: Full Width on Mobile, not full on Desktop
-
-const FixedContentHeight = styled(CardContent)`
-  height: 200px;
-  overflow-y: hidden;
+  margin-left: auto !important;
 `;
 
 export default ItemCard;

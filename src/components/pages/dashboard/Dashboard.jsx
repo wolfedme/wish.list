@@ -3,8 +3,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Grid, Typography } from '@material-ui/core';
-import ContentContainer from '../../layout/ContentContainer';
+import { Container, Typography } from '@material-ui/core';
 import LoadingSpinner from '../../general/LoadingSpinner';
 
 import HeaderBar from '../../layout/HeaderBar';
@@ -12,7 +11,7 @@ import HeaderBar from '../../layout/HeaderBar';
 import DebugPanel from '../../debug/DebugPanel';
 import { FirebaseContext } from '../../../globals/firebase';
 import { LoggerContext } from '../../../globals/logger';
-import ProductGrid from '../../Dashboard/ProductGrid';
+import ItemGrid from '../../Dashboard/ItemGrid';
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -30,7 +29,7 @@ const Dashboard = () => {
     log.debug('DEBUG Starting to fetch products');
     const productRef = firebase.db.ref('/products');
     await productRef
-      .once('value')
+      .once('value') // TODO: Change to listener for real time reservations
       .then((snapshot) => {
         log.debug(`DEBUG Fetched ${snapshot.val().length} entries from '/products'`);
         setProductList(snapshot.val());
@@ -50,19 +49,19 @@ const Dashboard = () => {
   return (
     <>
       <HeaderBar title={t('appTitle')} />
-      <ContentContainer maxWidth="xl">
-        <Grid container spacing={5} justify="center">
-          {isLoading ? (
-            <>
-              <LoadingSpinner />
-              <Typography>Fetching products from database</Typography>
-            </>
-          ) : (
-            <ProductGrid products={productList} />
-          )}
-        </Grid>
+      <Container>
+        {isLoading ? (
+          <>
+            <LoadingSpinner />
+            <Typography>Fetching products from database</Typography>
+          </>
+        ) : (
+          <>
+            <ItemGrid products={productList} />
+          </>
+        )}
         <DebugPanel />
-      </ContentContainer>
+      </Container>
     </>
   );
 };
