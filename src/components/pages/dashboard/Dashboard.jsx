@@ -11,38 +11,41 @@ import HeaderBar from '../../layout/HeaderBar';
 
 import DebugPanel from '../../debug/DebugPanel';
 import { FirebaseContext } from '../../../globals/firebase';
+import { LoggerContext } from '../../../globals/logger';
 import ProductGrid from '../../Dashboard/ProductGrid';
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const firebase = useContext(FirebaseContext);
+  const log = useContext(LoggerContext);
 
   const [productList, setProductList] = useState({});
   const [isLoading, setLoading] = useState(false);
 
-  // TODO: Fetch newest Amazon Price?
-  // TODO: Unique ID
+  const refreshList = 0; // TODO: Create dependency to refresh product list
 
-  // TODO: Maybe migrate back to jsx
+  // TODO: Fetch newest Amazon Price?
 
   const fetchItems = async () => {
-    console.log('DEBUG Starting to fetch products');
+    log.debug('DEBUG Starting to fetch products');
     const productRef = firebase.db.ref('/products');
-    await productRef.once('value').then((snapshot) => {
-      console.log(`DEBUG Fetched ${snapshot.val().length} entries`);
-      setProductList(snapshot.val());
-      return 1;
-    });
+    await productRef
+      .once('value')
+      .then((snapshot) => {
+        log.debug(`DEBUG Fetched ${snapshot.val().length} entries from '/products'`);
+        setProductList(snapshot.val());
+      })
+      .catch((err) => {
+        log.error(`ERROR Failed fetching /products: ${err.message}`);
+      });
   };
 
   useEffect(() => {
     setLoading(true);
-    console.log(fetchItems());
-    fetchItems().then((data) => {
-      console.log('DEBUG Set data. Productlist is size ' + productList.length);
+    fetchItems().then(() => {
       setLoading(false);
     });
-  }, []);
+  }, [refreshList]);
 
   return (
     <>
