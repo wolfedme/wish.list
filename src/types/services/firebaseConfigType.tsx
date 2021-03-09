@@ -1,3 +1,5 @@
+import app from 'firebase/app';
+
 export interface firebaseConfig {
   apiKey: string | undefined;
   authDomain: string | undefined;
@@ -9,7 +11,8 @@ export interface firebaseConfig {
 }
 
 export interface firebaseProvider {
-  db: any;
-  auth: any;
-  authState: any;
+  app: app.app.App;
+  db: app.database.Database;
+  auth: app.auth.Auth;
+  authState: 'none' | 'anon' | 'admin';
 }
