@@ -17,5 +17,5 @@ jobs:
       with:
         server: ssh.wolfed.me:22
         username: wolfed.me
-        password: ${{ secrets.ftp_password }}
+        password: ${{ secrets.SFTP_PASSWORD }}
         local-dir: ./wishlist/
