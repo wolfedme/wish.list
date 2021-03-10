@@ -15,10 +15,9 @@ jobs:
     - name: Push to SFTP
       uses: SamKirkland/FTP-Deploy-Action@4.0.0
       with:
-        server: ssh.wolfed.me
-        port: 22
+        server: ftp.wolfed.me
+        port: 21
         username: wolfed.me
-        password: ${{ secrets.SFTP_PASSWORD }}
-        protocol: ftps
+        password: ${{ secrets.FTP_PASSWORD }}
         server-dir: ./wishlist/
         log-level: verbose
