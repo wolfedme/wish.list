@@ -2,12 +2,7 @@
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "target": "Es6",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext",
-      "es6"
-    ],
+    "lib": ["dom", "dom.iterable", "esnext", "es6"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -25,7 +20,6 @@
     "noImplicitThis": true,
     "strictNullChecks": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src", "node_modules/@material-ui/*"],
+  "exclude": ["node_modules"]
 }
