@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import jsLogger from 'js-logger';
 import FirebaseService from 'services/firebase/FirebaseService';
 import { Product } from 'types/data/productType';
+import ProductCardContainer from './ProductCardContainer';
+import ProductCardContent from './ProductCardContent';
 interface ProductCardProps {
   productID: number;
 }
@@ -68,9 +70,10 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
   }
 
   return (
-    <div>
-      {loadingCard()}
-      {productCard()}
-    </div>
+    <React.Fragment>
+      <ProductCardContainer>
+        <ProductCardContent isLoading={isLoading} product={product} />
+      </ProductCardContainer>
+    </React.Fragment>
   );
 }

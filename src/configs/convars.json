@@ -1,5 +1,8 @@
 {
   "firebase": {
     "auto_anonymous_signin": true
+  },
+  "dashboard": {
+    "initial_fill_size": 15
   }
 }

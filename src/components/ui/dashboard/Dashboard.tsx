@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import jsLogger from 'js-logger';
 
 import FirebaseService from 'services/firebase/FirebaseService';
-import ProductCard from './ProductCard/ProductCard';
-import { ListItem } from 'types/data/listItemType';
 
+import DashboardContent from './DashboardContent';
+import HeaderBar from './HeaderBar';
+import { Container } from '@material-ui/core';
 import { Product } from 'types/data/productType';
+
 interface DashboardProps {}
 interface DashboardState {
   products: Product[];
@@ -52,11 +54,16 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
 
   render(): JSX.Element {
     return (
-      <div>
-        {this.state.products.map((x) => {
-          return <ProductCard productID={x.id} key={x.id} />;
-        })}
-      </div>
+      <React.Fragment>
+        <HeaderBar />
+        <Container maxWidth="md">
+          <DashboardContent
+            productIDs={this.state.products.map((x) => {
+              return x.id;
+            })}
+          />
+        </Container>
+      </React.Fragment>
     );
   }
 }
