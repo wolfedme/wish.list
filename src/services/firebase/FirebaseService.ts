@@ -6,7 +6,7 @@ import config from './FirebaseConfig';
 import jsLogger from 'js-logger';
 import { firebaseProvider } from 'types/services/firebaseConfigType';
 import * as convars from 'configs/convars.json';
-import { ListItem } from 'types/data/listItemType';
+import { Product } from 'types/data/productType';
 
 class FirebaseService {
   // Singleton
@@ -84,12 +84,12 @@ class FirebaseService {
   }
 
   // TODO: Realtime listener for reservation changes
-  public async getProductsOnce(): Promise<ListItem[]> {
+  public async getProductsOnce(): Promise<Product[]> {
     return this.provider.db
       .ref('products/')
       .once('value')
       .then((value) => {
-        return value.val().filter((x: ListItem) => x !== null);
+        return value.val().filter((x: Product) => x !== null);
       })
       .catch((err: app.FirebaseError) => {
         this.log.error(err.message);
@@ -100,11 +100,11 @@ class FirebaseService {
     return this.provider.db.ref(`/products/${id}/`);
   }
 
-  public updateItems(ids: number[]) {
+  public updateItem(data: Product) {
     this.log.warn('TODO: Implement');
   }
 
-  public addItem(data: ListItem) {
+  public addItem(data: Product) {
     this.log.warn('TODO: Implement');
   }
 

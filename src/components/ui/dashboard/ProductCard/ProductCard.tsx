@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import jsLogger from 'js-logger';
 import FirebaseService from 'services/firebase/FirebaseService';
-import { ListItem } from 'types/data/listItemType';
-
+import { Product } from 'types/data/productType';
 interface ProductCardProps {
   productID: number;
 }
 
 export default function ProductCard(props: ProductCardProps): JSX.Element {
   const [isLoading, setLoading] = useState(true);
-  const [product, setProduct] = useState<ListItem>({ id: 0, name: 'undef', isReserved: true });
+  const [product, setProduct] = useState<Product>({ id: 0, name: 'undef', isReserved: true });
 
   let initialized = false;
   let lastReservation = false;
@@ -24,7 +23,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
 
     // onValueChange
     ref.on('value', (x) => {
-      const data: ListItem = x.val();
+      const data: Product = x.val();
 
       const changes = getChanges(data, product);
 
@@ -54,22 +53,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
     };
   }, [props.productID]);
 
-  const loadingCard = () => {
-    return isLoading && !initialized && <p>Name: Am loading</p>;
-  };
-
-  const productCard = () => {
-    return (
-      !isLoading && (
-        <div>
-          <p>{product.name}</p>
-          <p>{product.isReserved.toString()}</p>
-        </div>
-      )
-    );
-  };
-
-  function getChanges(a: ListItem, b: ListItem) {
+  function getChanges(a: Product, b: Product) {
     const changes: string[] = [];
 
     a.description !== b.description && changes.push('description');

@@ -5,9 +5,10 @@ import FirebaseService from 'services/firebase/FirebaseService';
 import ProductCard from './ProductCard/ProductCard';
 import { ListItem } from 'types/data/listItemType';
 
+import { Product } from 'types/data/productType';
 interface DashboardProps {}
 interface DashboardState {
-  products: ListItem[];
+  products: Product[];
   isLoading: boolean;
   initialized: boolean;
 }
