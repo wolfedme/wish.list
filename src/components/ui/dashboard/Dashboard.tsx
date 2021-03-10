@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-import FirebaseService from '../../../services/firebase/FirebaseService';
-import { ListItem } from '../../../types/data/listItemType';
-
-import ProductCard from './ProductCard/ProductCard';
-
 import jsLogger from 'js-logger';
+
+import FirebaseService from 'services/firebase/FirebaseService';
+import ProductCard from './ProductCard/ProductCard';
+import { ListItem } from 'types/data/listItemType';
 
 interface DashboardProps {}
 interface DashboardState {

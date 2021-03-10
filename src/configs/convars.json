@@ -1,0 +1,5 @@
+{
+  "firebase": {
+    "auto_anonymous_signin": true
+  }
+}

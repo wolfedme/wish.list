@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import FirebaseService from '../../../../services/firebase/FirebaseService';
-import { ListItem } from '../../../../types/data/listItemType';
 import jsLogger from 'js-logger';
-import isEqual from 'lodash/isEqual';
+import FirebaseService from 'services/firebase/FirebaseService';
+import { ListItem } from 'types/data/listItemType';
 
 interface ProductCardProps {
   productID: number;
@@ -21,10 +20,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
     setLoading(true);
 
     // TODO: Initial Loading
-
     const ref = FirebaseService.fetchReference(props.productID);
-
-    // initial fetch
 
     // onValueChange
     ref.on('value', (x) => {

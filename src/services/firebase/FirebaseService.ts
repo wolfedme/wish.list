@@ -4,10 +4,9 @@ import 'firebase/database';
 import app from 'firebase/app';
 import config from './FirebaseConfig';
 import jsLogger from 'js-logger';
-
-import { ListItem } from '../../types/data/listItemType';
-import { firebaseProvider } from '../../types/services/firebaseConfigType';
-import configs from '../configuration/configurations';
+import { firebaseProvider } from 'types/services/firebaseConfigType';
+import * as convars from 'configs/convars.json';
+import { ListItem } from 'types/data/listItemType';
 
 class FirebaseService {
   // Singleton
@@ -48,7 +47,7 @@ class FirebaseService {
     this.log.debug('Firebase Service initialised.');
     FirebaseService.initialized = true;
 
-    configs.firebase.auto_anonymous_signin && this.signInAnonymously();
+    convars.firebase.auto_anonymous_signin && this.signInAnonymously();
 
     FirebaseService.classInstance = this;
   }

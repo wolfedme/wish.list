@@ -1,11 +1,8 @@
-import React from 'react';
 import Dashboard from './components/ui/dashboard/Dashboard';
+import React from 'react';
 import ConfigurationService from './services/configuration/ConfigurationService';
-import FirebaseService from './services/firebase/FirebaseService';
 
 class App extends React.Component {
-  firebaseService = FirebaseService;
-
   componentDidMount(): void {
     ConfigurationService.initialize();
   }

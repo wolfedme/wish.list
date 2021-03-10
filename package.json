@@ -26,10 +26,10 @@
     "web-vitals": "^1.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test",
+    "eject": "react-app-rewired eject",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{ts,tsx}\""
   },
@@ -58,6 +58,8 @@
     "eslint-config-prettier": "^7.2.0",
     "eslint-plugin-header": "^3.1.1",
     "lodash.isequal": "^4.5.0",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "react-app-rewire-alias": "^1.0.1",
+    "react-app-rewired": "^2.1.8"
   }
 }
