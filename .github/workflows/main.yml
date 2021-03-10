@@ -20,4 +20,5 @@ jobs:
         username: wolfed.me
         password: ${{ secrets.FTP_PASSWORD }}
         server-dir: ./wishlist/
+        local-dir: ./build/
         log-level: verbose
