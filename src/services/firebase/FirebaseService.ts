@@ -9,13 +9,18 @@ import * as convars from 'configs/convars.json';
 import { Product } from 'types/data/productType';
 
 class FirebaseService {
+  log = jsLogger.get('FirebaseService');
   // Singleton
   private static classInstance?: FirebaseService;
+
+  private basePath = convars.firebase.basePath;
+  private productsPath = convars.firebase.productsPath;
+  private fullPath = this.basePath + this.productsPath;
+
   static getInstance(): FirebaseService {
     return this.classInstance ?? new FirebaseService();
   }
 
-  log = jsLogger.get('FirebaseService');
   static initialized = false;
 
   provider: firebaseProvider;
@@ -35,7 +40,7 @@ class FirebaseService {
       return;
     }
 
-    app.initializeApp(config);
+    !app.apps.length && app.initializeApp(config);
 
     this.provider = {
       app: app.app(),
@@ -44,7 +49,7 @@ class FirebaseService {
       authState: 'none',
     };
 
-    this.log.debug('Firebase Service initialised.');
+    this.log.debug('Firebase Service initialized.');
     FirebaseService.initialized = true;
 
     convars.firebase.auto_anonymous_signin && this.signInAnonymously();
@@ -83,13 +88,14 @@ class FirebaseService {
     this.log.warn('TODO: Implement');
   }
 
-  // TODO: Realtime listener for reservation changes
   public async getProductsOnce(): Promise<Product[]> {
+    this.log.debug(`getProductsOnce() at path ${this.fullPath}`);
     return this.provider.db
-      .ref('products/')
+      .ref(this.fullPath)
       .once('value')
       .then((value) => {
-        return value.val().filter((x: Product) => x !== null);
+        const val = value.val();
+        return val ? val.filter((x: Product) => x !== null) : [];
       })
       .catch((err: app.FirebaseError) => {
         this.log.error(err.message);
@@ -97,7 +103,8 @@ class FirebaseService {
   }
 
   public fetchReference(id: number): app.database.Reference {
-    return this.provider.db.ref(`/products/${id}/`);
+    this.log.debug(`fetchReference(${id}) at path ${this.fullPath}${id}`);
+    return this.provider.db.ref(`${this.fullPath}${id}/`);
   }
 
   public updateItem(data: Product) {

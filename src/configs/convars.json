@@ -1,5 +1,7 @@
 {
   "firebase": {
+    "basePath": "mainDB/",
+    "productsPath": "products/",
     "auto_anonymous_signin": true
   },
   "dashboard": {
