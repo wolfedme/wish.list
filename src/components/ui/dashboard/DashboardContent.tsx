@@ -9,10 +9,12 @@ import { Product } from 'types/data/productType';
 
 interface DashboardContentProps {
   productIDs: number[];
+  initialized: boolean;
 }
 
 export default function DashboardContent(props: DashboardContentProps): JSX.Element {
   const skeletonFill = () => {
+    //TODO: To component
     const filler: Product = {
       id: 0,
       name: 'undef',
@@ -34,11 +36,17 @@ export default function DashboardContent(props: DashboardContentProps): JSX.Elem
     );
   };
 
+  const emptyContent = () => {
+    //TODO
+    return <p>empty</p>;
+  };
+
   return (
     <React.Fragment>
       <div style={{ marginTop: '25px' }} />
       <Grid container spacing={4}>
-        {props.productIDs.length === 0 && skeletonFill()}
+        {!props.initialized && skeletonFill()}
+        {props.productIDs.length === 0 && props.initialized && emptyContent()}
         {props.productIDs.map((x) => {
           return <ProductCard productID={x} key={x} />;
         })}

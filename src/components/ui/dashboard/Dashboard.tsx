@@ -15,6 +15,12 @@ interface DashboardState {
   initialized: boolean;
 }
 export default class Dashboard extends Component<DashboardProps, DashboardState> {
+  /*
+  TODO:
+    - Add empty "nothin is here" component if no products are present
+
+  */
+
   private log = jsLogger.get('Dashboard');
 
   constructor(props: DashboardProps) {
@@ -38,10 +44,9 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     this.log.debug(`Initializing`);
     this.setState({ isLoading: true });
 
-    // TODO: Show "loading cards" during init
     FirebaseService.getProductsOnce()
       .then((arr) => {
-        this.setState({ products: arr });
+        arr && this.setState({ products: arr });
         this.log.debug(`Successfully fetched ${arr.length} products.`);
         this.log.debug(arr);
         this.setState({ initialized: true });
@@ -58,6 +63,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
         <HeaderBar />
         <Container maxWidth="md">
           <DashboardContent
+            initialized={this.state.initialized}
             productIDs={this.state.products.map((x) => {
               return x.id;
             })}
