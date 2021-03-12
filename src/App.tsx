@@ -7,10 +7,6 @@ import { ThemeProvider } from '@material-ui/core';
 import { createMuiTheme } from '@material-ui/core/styles';
 
 class App extends React.Component {
-  componentDidMount(): void {
-    ConfigurationService.initialize();
-  }
-
   render(): JSX.Element {
     const theme = createMuiTheme();
 
