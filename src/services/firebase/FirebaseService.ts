@@ -76,17 +76,19 @@ class FirebaseService {
     this.log.warn('TODO: Implement');
   }
 
-  public async getProductsOnce(): Promise<Product[]> {
+  public async getProductsOnce(): Promise<any> {
     this.log.debug(`getProductsOnce() at path ${this.fullPath}`);
     return this.provider.db
       .ref(this.fullPath)
       .once('value')
       .then((value) => {
-        const val = value.val();
-        return val ? val.filter((x: Product) => x !== null) : [];
+        this.log.debug('getProducts: ');
+        this.log.debug(value.val());
+        return Promise.resolve(Object.values(value.val()));
       })
       .catch((err: app.FirebaseError) => {
         this.log.error(err.message);
+        return Promise.reject(err);
       });
   }
 
@@ -108,15 +110,10 @@ class FirebaseService {
     this.log.debug(`addItem(${data}) called`);
 
     const toPush = data;
-    const pushRef = await this.provider.db.ref(this.fullPath).push();
-    !pushRef && this.log.warn('pushRef failed');
-    !pushRef.key && this.log.warn('pushRef has no key');
-    if (!pushRef.key) Promise.reject({ message: 'pushRef.key is undefined' });
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     toPush.id = new Date().getTime();
-    this.log.debug(`ID of object to be pushed: ${toPush.id}, key is: ${pushRef.key}`);
+    const pushRef = this.provider.db.ref(this.fullPath + toPush.id + '/');
     return await pushRef
-      .push(toPush)
+      .set(toPush)
       .then((_) => {
         this.log.debug(`Pushed product with generated id ${toPush.id}`);
         return Promise.resolve(toPush);

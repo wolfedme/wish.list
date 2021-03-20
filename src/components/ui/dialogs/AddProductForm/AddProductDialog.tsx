@@ -84,7 +84,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
   function sendChangesHandler(): void {
     setLoading(true);
     const product: Product = {
-      id: '0',
+      id: 0,
       name: nameValue,
       price: Number(priceValue),
       isReserved: false,

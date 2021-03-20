@@ -8,3 +8,9 @@ export interface Product {
   imgUrl?: string;
   link?: string;
 }
+
+export interface Currency {
+  id: number;
+  value: string;
+  label: string;
+}

@@ -12,6 +12,7 @@ interface DashboardContentProps {
   initialized: boolean;
 }
 
+//TODO: New cards are not referenced nor updated
 export default function DashboardContent(props: DashboardContentProps): JSX.Element {
   const skeletonFill = () => {
     //TODO: To component
