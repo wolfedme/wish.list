@@ -5,12 +5,12 @@ import { Product } from 'types/data/productType';
 import ProductCardContainer from './ProductCardContainer';
 import ProductCardContent from './ProductCardContent';
 interface ProductCardProps {
-  productID: string;
+  productID: number;
 }
 
 export default function ProductCard(props: ProductCardProps): JSX.Element {
   const [isLoading, setLoading] = useState(true);
-  const [product, setProduct] = useState<Product>({ id: '0', name: 'undef', isReserved: true });
+  const [product, setProduct] = useState<Product>({ id: 0, name: 'undef', isReserved: true });
 
   let initialized = false;
   let lastReservation = false;
