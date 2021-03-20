@@ -113,7 +113,7 @@ class FirebaseService {
     !pushRef.key && this.log.warn('pushRef has no key');
     if (!pushRef.key) Promise.reject({ message: 'pushRef.key is undefined' });
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    toPush.id = pushRef.key!;
+    toPush.id = new Date().getTime();
     this.log.debug(`ID of object to be pushed: ${toPush.id}, key is: ${pushRef.key}`);
     return await pushRef
       .push(toPush)
