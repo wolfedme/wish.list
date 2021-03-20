@@ -102,7 +102,7 @@ class FirebaseService {
       });
   }
 
-  public fetchReference(id: number): app.database.Reference {
+  public fetchReference(id: string): app.database.Reference {
     this.log.debug(`fetchReference(${id}) at path ${this.fullPath}${id}`);
     return this.provider.db.ref(`${this.fullPath}${id}/`);
   }
@@ -115,11 +115,11 @@ class FirebaseService {
     this.log.warn('TODO: Implement');
   }
 
-  public removeItem(id: number) {
+  public removeItem(id: string) {
     this.log.warn('TODO: Implement');
   }
 
-  public removeBulk(ids: number[]) {
+  public removeBulk(ids: string[]) {
     this.log.warn('TODO: Implement');
   }
 }

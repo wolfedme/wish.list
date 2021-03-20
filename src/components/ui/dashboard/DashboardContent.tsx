@@ -8,7 +8,7 @@ import * as convars from 'configs/convars.json';
 import { Product } from 'types/data/productType';
 
 interface DashboardContentProps {
-  productIDs: number[];
+  productIDs: string[];
   initialized: boolean;
 }
 
@@ -16,7 +16,7 @@ export default function DashboardContent(props: DashboardContentProps): JSX.Elem
   const skeletonFill = () => {
     //TODO: To component
     const filler: Product = {
-      id: 0,
+      id: '0',
       name: 'undef',
       isReserved: true,
     };

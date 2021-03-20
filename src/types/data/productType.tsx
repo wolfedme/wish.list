@@ -1,5 +1,5 @@
 export interface Product {
-  id: number;
+  id: string;
   name: string;
   isReserved: boolean;
   description?: string;
@@ -7,4 +7,10 @@ export interface Product {
   vendor?: string;
   imgUrl?: string;
   link?: string;
+}
+
+export interface Currency {
+  id: number;
+  value: string;
+  label: string;
 }
