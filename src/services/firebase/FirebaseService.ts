@@ -27,18 +27,6 @@ class FirebaseService {
 
   constructor() {
     //Ensure only one Service gets init
-    if (FirebaseService.initialized && app.apps.length) {
-      this.log.debug('Multiple instances of Firebase Service called.');
-
-      this.provider = {
-        app: app.app(),
-        db: app.database(),
-        auth: app.auth(),
-        authState: 'none',
-      };
-
-      return;
-    }
 
     !app.apps.length && app.initializeApp(config);
 
@@ -111,8 +99,32 @@ class FirebaseService {
     this.log.warn('TODO: Implement');
   }
 
-  public addItem(data: Product) {
-    this.log.warn('TODO: Implement');
+  public async addItem(data: Product): Promise<Product> {
+    if (!data) {
+      this.log.debug('addItem() called with empty product');
+      return Promise.reject({ message: 'Product empty' });
+    }
+
+    this.log.debug(`addItem(${data}) called`);
+
+    const toPush = data;
+    const pushRef = await this.provider.db.ref(this.fullPath).push();
+    !pushRef && this.log.warn('pushRef failed');
+    !pushRef.key && this.log.warn('pushRef has no key');
+    if (!pushRef.key) Promise.reject({ message: 'pushRef.key is undefined' });
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    toPush.id = pushRef.key!;
+    this.log.debug(`ID of object to be pushed: ${toPush.id}, key is: ${pushRef.key}`);
+    return await pushRef
+      .push(toPush)
+      .then((_) => {
+        this.log.debug(`Pushed product with generated id ${toPush.id}`);
+        return Promise.resolve(toPush);
+      })
+      .catch((x: Error) => {
+        this.log.error({ message: `Error while pushing: ${x.message}` });
+        return Promise.reject(x);
+      });
   }
 
   public removeItem(id: string) {

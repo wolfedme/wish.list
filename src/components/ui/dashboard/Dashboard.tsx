@@ -5,6 +5,9 @@ import FirebaseService from 'services/firebase/FirebaseService';
 
 import DashboardContent from './DashboardContent';
 import HeaderBar from './HeaderBar';
+import AddProductDialog from 'components/ui/dialogs/AddProductForm/AddProductDialog';
+import DashboardActions from './DashboardActions';
+
 import { Container } from '@material-ui/core';
 import { Product } from 'types/data/productType';
 
@@ -13,6 +16,11 @@ interface DashboardState {
   products: Product[];
   isLoading: boolean;
   initialized: boolean;
+  dialogStates: {
+    addDialog: {
+      open: boolean;
+    };
+  };
 }
 export default class Dashboard extends Component<DashboardProps, DashboardState> {
   /*
@@ -29,7 +37,15 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
       products: [],
       initialized: false,
       isLoading: false,
+      dialogStates: {
+        addDialog: {
+          open: false,
+        },
+      },
     };
+
+    this.handleAddDialogClose = this.handleAddDialogClose.bind(this);
+    this.handleAddDialogOpen = this.handleAddDialogOpen.bind(this);
   }
 
   componentWillUnmount(): void {
@@ -57,9 +73,24 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     this.setState({ isLoading: false });
   }
 
+  // TODO: Maybe to toggle?
+  handleAddDialogClose(): void {
+    this.log.debug('Closed AddProductDialog');
+    this.setState({ dialogStates: { addDialog: { open: false } } });
+  }
+
+  handleAddDialogOpen(): void {
+    this.log.debug('Opened AddProductDialog');
+    this.setState({ dialogStates: { addDialog: { open: true } } });
+  }
+
   render(): JSX.Element {
     return (
       <React.Fragment>
+        <AddProductDialog
+          isOpen={this.state.dialogStates.addDialog.open}
+          handleClose={this.handleAddDialogClose}
+        />
         <HeaderBar />
         <Container maxWidth="md">
           <DashboardContent
@@ -69,6 +100,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
             })}
           />
         </Container>
+        <DashboardActions openAddHandler={this.handleAddDialogOpen} />
       </React.Fragment>
     );
   }
