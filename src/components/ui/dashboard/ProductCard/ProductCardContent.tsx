@@ -20,7 +20,7 @@ export default function ProductCardContent(props: CardContentProps): JSX.Element
   return (
     <div>
       {props.isLoading && <CircularProgress />}
-      {props.product.name !== 'undef' && productDisplay()}
+      {props.product && props.product.name !== 'undef' && productDisplay()}
     </div>
   );
 }

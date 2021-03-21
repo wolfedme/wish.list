@@ -48,14 +48,6 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     this.handleAddDialogOpen = this.handleAddDialogOpen.bind(this);
   }
 
-  componentWillUnmount(): void {
-    this.setState({
-      products: [],
-      initialized: false,
-      isLoading: false,
-    });
-  }
-
   componentDidMount(): void {
     this.log.debug(`Initializing`);
     this.setState({ isLoading: true });
@@ -70,7 +62,22 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
       .catch((err) => {
         this.log.error(err.message);
       });
+
+    // Setup onChildChange
+    const ref = FirebaseService.fetchWholeReference();
+    ref.on('child_added', (x) => {
+      const value: Product = x.val() as Product;
+      this.log.debug('child_added ', value);
+      this.setState({ products: [...this.state.products, value] });
+    });
+
     this.setState({ isLoading: false });
+  }
+
+  componentWillUnmount(): void {
+    const ref = FirebaseService.fetchWholeReference();
+
+    ref.off();
   }
 
   // TODO: Maybe to toggle?

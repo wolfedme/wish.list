@@ -21,7 +21,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
     setLoading(true);
 
     // TODO: Initial Loading
-    const ref = FirebaseService.fetchReference(props.productID);
+    const ref = FirebaseService.fetchProductReference(props.productID);
 
     // onValueChange
     ref.on('value', (x) => {
@@ -57,6 +57,8 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
 
   function getChanges(a: Product, b: Product) {
     const changes: string[] = [];
+
+    if (!a || !b) return [];
 
     a.description !== b.description && changes.push('description');
     a.id !== b.id && changes.push('id');
