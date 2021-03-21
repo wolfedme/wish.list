@@ -76,15 +76,18 @@ class FirebaseService {
     this.log.warn('TODO: Implement');
   }
 
-  public async getProductsOnce(): Promise<any> {
+  public async getProductsOnce(): Promise<Product[]> {
     this.log.debug(`getProductsOnce() at path ${this.fullPath}`);
     return this.provider.db
       .ref(this.fullPath)
       .once('value')
       .then((value) => {
-        this.log.debug('getProducts: ');
-        this.log.debug(value.val());
-        return Promise.resolve(Object.values(value.val()));
+        const arr: Product[] = [];
+        value.forEach((x) => {
+          arr.push(x.val());
+        });
+        this.log.debug(`Found ${arr.length} products: `, arr);
+        return Promise.resolve(arr);
       })
       .catch((err: app.FirebaseError) => {
         this.log.error(err.message);
@@ -92,9 +95,14 @@ class FirebaseService {
       });
   }
 
-  public fetchReference(id: number): app.database.Reference {
+  public fetchProductReference(id: number): app.database.Reference {
     this.log.debug(`fetchReference(${id}) at path ${this.fullPath}${id}`);
     return this.provider.db.ref(`${this.fullPath}${id}/`);
+  }
+
+  public fetchWholeReference(): app.database.Reference {
+    this.log.debug(`fetchReference for products at ${this.fullPath}`);
+    return this.provider.db.ref(`${this.fullPath}`);
   }
 
   public updateItem(data: Product) {
