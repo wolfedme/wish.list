@@ -81,6 +81,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
   }
 
   // TODO: Check for empty textfields
+  // TODO: Validate textfields
   function sendChangesHandler(): void {
     setLoading(true);
     const product: Product = {

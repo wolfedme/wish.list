@@ -8,7 +8,7 @@ import * as convars from 'configs/convars.json';
 import { Product } from 'types/data/productType';
 
 interface DashboardContentProps {
-  productIDs: number[];
+  products: Product[];
   initialized: boolean;
 }
 
@@ -28,7 +28,7 @@ export default function DashboardContent(props: DashboardContentProps): JSX.Elem
       <React.Fragment>
         {times.map((key) => {
           return (
-            <ProductCardContainer isPrefill={true} key={key}>
+            <ProductCardContainer isSkeleton={true} key={key}>
               <ProductCardContent isLoading={true} product={filler} key={key}></ProductCardContent>
             </ProductCardContainer>
           );
@@ -47,9 +47,9 @@ export default function DashboardContent(props: DashboardContentProps): JSX.Elem
       <div style={{ marginTop: '25px' }} />
       <Grid container spacing={4}>
         {!props.initialized && skeletonFill()}
-        {props.productIDs.length === 0 && props.initialized && emptyContent()}
-        {props.productIDs.map((x) => {
-          return <ProductCard productID={x} key={x} />;
+        {!props.products.length && props.initialized && emptyContent()}
+        {props.products.map((x, i) => {
+          return <ProductCard product={x} key={i} />;
         })}
       </Grid>
     </React.Fragment>

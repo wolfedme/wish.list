@@ -1,21 +1,18 @@
 import { Card, Grid } from '@material-ui/core';
 import React from 'react';
 
+import ProductCardSkeleton from './ProductCardSkeleton';
+
 import grey from '@material-ui/core/colors/grey';
 
 interface CardContainerProps {
   children?: React.ReactNode;
-  isPrefill?: boolean;
+  isSkeleton?: boolean;
 }
 
 export default function ProductCardContainer(props: CardContainerProps): JSX.Element {
   const isPrefill = () => {
-    if (props.isPrefill)
-      return (
-        <Card style={{ backgroundColor: grey[200] }} variant="outlined">
-          {props.children}
-        </Card>
-      );
+    if (props.isSkeleton) return <ProductCardSkeleton>{props.children}</ProductCardSkeleton>;
     return <Card>{props.children}</Card>;
   };
 

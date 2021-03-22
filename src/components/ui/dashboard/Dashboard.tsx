@@ -69,6 +69,19 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
       const value: Product = x.val() as Product;
       this.log.debug('child_added ', value);
       this.setState({ products: [...this.state.products, value] });
+      //TODO: Animate Card in
+    });
+
+    ref.on('child_changed', (x) => {
+      const value: Product = x.val() as Product;
+      this.log.debug('child_changed ', value);
+      this.log.warn('TODO: Implement child_changed');
+    });
+
+    ref.on('child_removed', (x) => {
+      const value: Product = x.val() as Product;
+      this.log.debug('child_removed ', value);
+      this.log.warn('TODO: Implement child_removed');
     });
 
     this.setState({ isLoading: false });
@@ -100,12 +113,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
         />
         <HeaderBar />
         <Container maxWidth="md">
-          <DashboardContent
-            initialized={this.state.initialized}
-            productIDs={this.state.products.map((x) => {
-              return x.id;
-            })}
-          />
+          <DashboardContent initialized={this.state.initialized} products={this.state.products} />
         </Container>
         <DashboardActions openAddHandler={this.handleAddDialogOpen} />
       </React.Fragment>

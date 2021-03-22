@@ -110,12 +110,16 @@ class FirebaseService {
   }
 
   public async addItem(data: Product): Promise<Product> {
+    // TODO: Validate
     if (!data) {
       this.log.debug('addItem() called with empty product');
       return Promise.reject({ message: 'Product empty' });
     }
 
     this.log.debug(`addItem(${data}) called`);
+
+    // Validate
+    // typeof etc.
 
     const toPush = data;
     toPush.id = new Date().getTime();

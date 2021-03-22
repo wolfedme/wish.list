@@ -2,7 +2,12 @@
   "extends": "./tsconfig.paths.json",
   "compilerOptions": {
     "target": "Es6",
-    "lib": ["dom", "dom.iterable", "esnext", "es6"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext",
+      "es6"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
@@ -20,6 +25,12 @@
     "noImplicitThis": true,
     "strictNullChecks": true
   },
-  "include": ["src", "src/*"],
-  "exclude": ["node_modules", "node_modules/*"]
+  "include": [
+    "src",
+    "src/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "node_modules/*"
+  ]
 }

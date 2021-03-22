@@ -3,7 +3,7 @@ import React from 'react';
 import { Product } from 'types/data/productType';
 
 interface CardContentProps {
-  isLoading: boolean;
+  isLoading?: boolean;
   product: Product;
 }
 
