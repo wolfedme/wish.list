@@ -83,6 +83,11 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
   // TODO: Check for empty textfields
   // TODO: Validate textfields
   function sendChangesHandler(): void {
+    // TODO: Price not parsed correctly
+    // TODO: Currency not saved
+    // TODO: Check more missing types
+    // TODO: Breakpoints for textfields
+
     setLoading(true);
     const product: Product = {
       id: 0,

@@ -76,6 +76,11 @@ class FirebaseService {
     this.log.warn('TODO: Implement');
   }
 
+  public getUser() {
+    const uid = this.provider.auth.currentUser?.uid;
+    return uid ? uid : 'none';
+  }
+
   public async getProductsOnce(): Promise<Product[]> {
     this.log.debug(`getProductsOnce() at path ${this.fullPath}`);
     return this.provider.db

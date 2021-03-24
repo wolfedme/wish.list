@@ -1,8 +1,6 @@
 import { Grid } from '@material-ui/core';
 import React from 'react';
 import ProductCard from './ProductCard/ProductCard';
-import ProductCardContainer from './ProductCard/ProductCardContainer';
-import ProductCardContent from './ProductCard/ProductCardContent';
 
 import * as convars from 'configs/convars.json';
 import { Product } from 'types/data/productType';
@@ -10,6 +8,12 @@ import { Product } from 'types/data/productType';
 interface DashboardContentProps {
   products: Product[];
   initialized: boolean;
+  handler: {
+    cardHandler: {
+      reserve(product: Product): Promise<Product>;
+      unReserve(product: Product): Promise<Product>;
+    };
+  };
 }
 
 //TODO: New cards are not referenced nor updated
@@ -26,11 +30,16 @@ export default function DashboardContent(props: DashboardContentProps): JSX.Elem
 
     return (
       <React.Fragment>
-        {times.map((key) => {
+        {times.map((key, i) => {
           return (
-            <ProductCardContainer isSkeleton={true} key={key}>
-              <ProductCardContent isLoading={true} product={filler} key={key}></ProductCardContent>
-            </ProductCardContainer>
+            <Grid item xs={12} md={6} lg={4} key={i}>
+              <ProductCard
+                product={filler}
+                isSkeleton
+                key={key}
+                handler={props.handler.cardHandler}
+              />
+            </Grid>
           );
         })}
       </React.Fragment>
@@ -49,7 +58,11 @@ export default function DashboardContent(props: DashboardContentProps): JSX.Elem
         {!props.initialized && skeletonFill()}
         {!props.products.length && props.initialized && emptyContent()}
         {props.products.map((x, i) => {
-          return <ProductCard product={x} key={i} />;
+          return (
+            <Grid item xs={12} md={6} lg={4} key={i}>
+              <ProductCard product={x} key={i} handler={props.handler.cardHandler} />
+            </Grid>
+          );
         })}
       </Grid>
     </React.Fragment>

@@ -29,7 +29,14 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
 
   */
 
-  private log = jsLogger.get('Dashboard');
+  private static log = jsLogger.get('Dashboard');
+
+  private handler = {
+    cardHandler: {
+      reserve: this.handleReserve,
+      unReserve: this.handleUnreserve,
+    },
+  };
 
   constructor(props: DashboardProps) {
     super(props);
@@ -49,39 +56,49 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
   }
 
   componentDidMount(): void {
-    this.log.debug(`Initializing`);
+    Dashboard.log.debug(`Initializing`);
     this.setState({ isLoading: true });
 
     FirebaseService.getProductsOnce()
       .then((arr) => {
         arr && this.setState({ products: arr });
-        this.log.debug(`Successfully fetched ${arr.length} products.`);
-        this.log.debug(arr);
+        Dashboard.log.debug(`Successfully fetched ${arr.length} products.`);
+        Dashboard.log.debug(arr);
         this.setState({ initialized: true });
       })
       .catch((err) => {
-        this.log.error(err.message);
+        Dashboard.log.error(err.message);
       });
 
     // Setup onChildChange
     const ref = FirebaseService.fetchWholeReference();
     ref.on('child_added', (x) => {
       const value: Product = x.val() as Product;
-      this.log.debug('child_added ', value);
+      Dashboard.log.debug('child_added ', value);
       this.setState({ products: [...this.state.products, value] });
       //TODO: Animate Card in
     });
 
     ref.on('child_changed', (x) => {
       const value: Product = x.val() as Product;
-      this.log.debug('child_changed ', value);
-      this.log.warn('TODO: Implement child_changed');
+      Dashboard.log.debug('child_changed ', value);
+
+      const i = this.state.products.findIndex((obj) => {
+        return obj.id === value.id;
+      });
+      if (i === -1) {
+        Dashboard.log.error('CRITICAL\nchild_changed does not exist or ID has changed.', value);
+        return;
+      }
+      const items = [...this.state.products];
+      items[i] = { ...value };
+      this.setState({ products: items });
     });
 
     ref.on('child_removed', (x) => {
       const value: Product = x.val() as Product;
-      this.log.debug('child_removed ', value);
-      this.log.warn('TODO: Implement child_removed');
+      Dashboard.log.debug('child_removed ', value);
+      Dashboard.log.warn('TODO: Implement child_removed');
     });
 
     this.setState({ isLoading: false });
@@ -95,13 +112,23 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
 
   // TODO: Maybe to toggle?
   handleAddDialogClose(): void {
-    this.log.debug('Closed AddProductDialog');
+    Dashboard.log.debug('Closed AddProductDialog');
     this.setState({ dialogStates: { addDialog: { open: false } } });
   }
 
   handleAddDialogOpen(): void {
-    this.log.debug('Opened AddProductDialog');
+    Dashboard.log.debug('Opened AddProductDialog');
     this.setState({ dialogStates: { addDialog: { open: true } } });
+  }
+
+  async handleReserve(product: Product): Promise<Product> {
+    Dashboard.log.warn('TODO: Implement');
+    return Promise.resolve(product);
+  }
+
+  async handleUnreserve(product: Product): Promise<Product> {
+    Dashboard.log.warn('TODO: Implement');
+    return Promise.resolve(product);
   }
 
   render(): JSX.Element {
@@ -112,8 +139,12 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
           handleClose={this.handleAddDialogClose}
         />
         <HeaderBar />
-        <Container maxWidth="md">
-          <DashboardContent initialized={this.state.initialized} products={this.state.products} />
+        <Container maxWidth="lg">
+          <DashboardContent
+            initialized={this.state.initialized}
+            products={this.state.products}
+            handler={this.handler}
+          />
         </Container>
         <DashboardActions openAddHandler={this.handleAddDialogOpen} />
       </React.Fragment>

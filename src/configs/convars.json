@@ -5,6 +5,6 @@
     "auto_anonymous_signin": true
   },
   "dashboard": {
-    "initial_fill_size": 15
+    "initial_fill_size": 6
   }
 }
