@@ -75,6 +75,7 @@ class FirebaseService {
   }
 
   public getUser() {
+    // TODO: Reduce calls and store uid in variable
     const uid = this.provider.auth.currentUser?.uid;
     return uid ? uid : 'none';
   }
@@ -112,14 +113,53 @@ class FirebaseService {
     FirebaseService.log.warn('TODO: Implement');
   }
 
+  public async toggleReserve(data: Product): Promise<Product> {
+    const dbData = this.provider.db.ref(`${this.fullPath}/${data.id}`);
+    const dbObject: Product = (await dbData.once('value')).val();
+
+    //TODO: Delete reservedBy
+
+    if (data.isReserved !== dbObject.isReserved) {
+      return Promise.reject(
+        new Error('Cannot toggle, product isReserved differs from database state'),
+      );
+    }
+
+    if (data.isReserved && data.reservedBy && data.reservedBy !== this.getUser()) {
+      return Promise.reject(
+        new Error("Cannot undo reserve, product's ReservedBy differs from current UserID"),
+      );
+    }
+
+    const updatedProduct = { ...data };
+    updatedProduct.isReserved = !updatedProduct.isReserved;
+
+    if (!data.isReserved) {
+      updatedProduct.reservedBy = this.getUser();
+    }
+
+    if (data.isReserved) {
+      updatedProduct.reservedBy && delete updatedProduct.reservedBy;
+    }
+
+    return dbData
+      .set(updatedProduct)
+      .then((x) => {
+        return Promise.resolve(x);
+      })
+      .catch((x) => {
+        return Promise.reject(x);
+      });
+  }
+
   public async addItem(data: Product): Promise<Product> {
     // TODO: Validate
     if (!data) {
-      FirebaseService.log.debug('addItem() called with empty product');
+      FirebaseService.log.error('addItem() called with empty product');
       return Promise.reject({ message: 'Product empty' });
     }
 
-    FirebaseService.log.debug(`addItem(${data}) called`);
+    FirebaseService.log.debug('addItem() with data: ', data);
 
     // Validate
     // typeof etc.

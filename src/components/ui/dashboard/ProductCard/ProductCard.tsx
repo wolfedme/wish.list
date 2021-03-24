@@ -5,7 +5,6 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
-import grey from '@material-ui/core/colors/grey';
 import { Theme } from '@material-ui/core/styles';
 import createStyles from '@material-ui/core/styles/createStyles';
 import makeStyles from '@material-ui/core/styles/makeStyles';
@@ -19,34 +18,58 @@ import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 import Chip from '@material-ui/core/Chip';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
-import Grid from '@material-ui/core/Grid';
 import Skeleton from '@material-ui/lab/Skeleton';
+import BusinessIcon from '@material-ui/icons/Business';
+import grey from '@material-ui/core/colors/grey';
+
+import jsLogger from 'js-logger';
+import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import InfoIcon from '@material-ui/icons/Info';
 
 interface ProductCardProps {
   isSkeleton?: boolean;
   product: Product;
   handler: {
-    reserve(product: Product): Promise<Product>;
-    unReserve(product: Product): Promise<Product>;
+    toggleReserve(product: Product): Promise<Product>;
   };
 }
 
-// TODO: Limit title-length in add dialogue
+// TODO: Expand/collapse for title & description
+// TODO: Limit title length in ProductDialogue
+// TODO: Confirm reserve/unreserve
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       height: 'auto',
     },
     title: {
-      overflow: 'hidden',
+      wordWrap: 'break-word',
+      whiteSpace: 'pre-wrap',
+      overflowX: 'hidden',
+      overflowY: 'auto',
       textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      WebkitLineClamp: 1,
-      WebkitBoxOrient: 'vertical',
+      height: '96px',
     },
     media: {
-      height: 0,
-      paddingTop: '56.25%', // 16:9
+      height: '250px',
+      display: 'flex',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-end',
+    },
+    priceTag: {
+      marginTop: '8px',
+      marginRight: '8px',
+      fontSize: '1rem',
+      borderRadius: '4px',
+    },
+    descriptionText: {
+      wordWrap: 'break-word',
+      whiteSpace: 'pre-wrap',
+      overflowX: 'hidden',
+      overflowY: 'auto',
+      textOverflow: 'ellipsis',
+      height: '106px',
     },
     reserveButton: {
       marginLeft: 'auto',
@@ -58,24 +81,22 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
   const classes = useStyles();
   const userID = FirebaseService.getUser();
 
+  const log = jsLogger.get(`productCard #${props.product.id}`);
+
   const [buttonLoading, setButtonLoading] = useState(false);
 
-  function handleReserve() {
+  function handleToggleReserve() {
+    log.debug('Started toggle');
     setButtonLoading(true);
     props.handler
-      .reserve(props.product)
-      .then()
-      .catch()
-      .finally(() => setButtonLoading(false));
-  }
-
-  function handleUnreserve() {
-    setButtonLoading(true);
-    props.handler
-      .unReserve(props.product)
-      .then()
-      .catch()
-      .finally(() => setButtonLoading(false));
+      .toggleReserve(props.product)
+      .catch((x) => {
+        log.debug('Error while toggling: ', x.message);
+      })
+      .finally(() => {
+        setButtonLoading(false);
+        log.debug('Finalized toggle');
+      });
   }
 
   // TODO: Color-code cards by category
@@ -91,6 +112,16 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
             props.product.name
           )
         }
+        action={
+          !props.isSkeleton &&
+          process.env.NODE_ENV === 'development' && (
+            <Tooltip title={props.product.id} placement="top">
+              <IconButton aria-label="settings">
+                <InfoIcon />
+              </IconButton>
+            </Tooltip>
+          )
+        }
         className={classes.title}
       />
     );
@@ -101,18 +132,38 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
     const placeholderURL = 'https://i.stack.imgur.com/y9DpT.jpg';
     const imgUrl =
       props.product.imgUrl && props.product.imgUrl !== '' ? props.product.imgUrl : placeholderURL;
+    const price = () => {
+      let priceStr = 'Unknown price';
+      if (props.product.price) priceStr = props.product.price + ' ' + props.product.currency?.value;
+      return (
+        <Chip
+          className={classes.priceTag}
+          color={props.product.price ? 'primary' : 'default'}
+          icon={<LocalOfferIcon />}
+          label={priceStr}
+        />
+      );
+    };
+
     return props.isSkeleton ? (
       <Skeleton animation="wave" variant="rect" className={classes.media} />
     ) : (
-      <CardMedia className={classes.media} image={imgUrl} title={props.product.name} />
+      <CardMedia className={classes.media} image={imgUrl} title={props.product.name}>
+        {price()}
+      </CardMedia>
     );
   };
 
   const cardContent = () => {
-    // TODO: Description hier hin
     return (
       <CardContent>
-        <Typography variant="body2" color="textSecondary" component="p">
+        <Typography
+          variant="body2"
+          color="textSecondary"
+          component="p"
+          noWrap
+          className={classes.descriptionText}
+        >
           {props.isSkeleton ? (
             <>
               <Skeleton />
@@ -122,7 +173,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
           ) : props.product.description ? (
             props.product.description
           ) : (
-            ''
+            'No description given.'
           )}
         </Typography>
       </CardContent>
@@ -132,22 +183,11 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
   const cardAction = () => {
     // TODO: Loading Button
 
-    const price = () => {
-      let priceStr = 'Unknown price';
-      if (props.product.price) priceStr = props.product.price + ' ' + props.product.currency?.value;
-      return (
-        <Chip
-          color={props.product.price ? 'primary' : 'default'}
-          icon={<LocalOfferIcon />}
-          label={priceStr}
-        />
-      );
-    };
-
     const reservedByUser = () => {
       return props.product.reservedBy && props.product.reservedBy === userID;
     };
 
+    // TODO: Simplify
     const reserveButton = () => {
       if (reservedByUser()) {
         return (
@@ -156,10 +196,10 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
             variant="outlined"
             color="secondary"
             disableElevation
-            onClick={() => handleUnreserve()}
+            onClick={() => handleToggleReserve()}
             disabled={buttonLoading}
             size="large"
-            startIcon={<RotateLeftIcon />}
+            startIcon={!buttonLoading ? <RotateLeftIcon /> : <CircularProgress size={24} />}
           >
             Undo Reservation
           </Button>
@@ -183,16 +223,25 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
 
       return (
         <Button
-          variant="contained"
+          variant={!buttonLoading ? 'contained' : 'outlined'}
           className={classes.reserveButton}
           color="primary"
           disableElevation
-          onClick={() => handleReserve()}
+          onClick={() => handleToggleReserve()}
           size="large"
           disabled={buttonLoading}
-          startIcon={<CheckCircleIcon />}
+          startIcon={!buttonLoading ? <CheckCircleIcon /> : <CircularProgress size={24} />}
         >
           Reserve
+        </Button>
+      );
+    };
+
+    const linkButton = () => {
+      const disabled = !props.product.link || props.product.link === '';
+      return (
+        <Button disabled={disabled} startIcon={<BusinessIcon />}>
+          Website
         </Button>
       );
     };
@@ -207,15 +256,21 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
 
     return (
       <CardActions disableSpacing>
-        {price()}
+        {linkButton()}
         {reserveButton()}
       </CardActions>
     );
   };
 
+  // TODO: Different display if reserved by current user
+
   const cardWrapper = () => {
     return (
-      <Card className={classes.root} variant={'elevation'}>
+      <Card
+        className={classes.root}
+        variant={props.product.isReserved ? 'outlined' : 'elevation'}
+        style={props.product.isReserved ? { backgroundColor: grey[200] } : undefined}
+      >
         {cardHeader()}
         {cardMedia()}
         {cardContent()}

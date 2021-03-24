@@ -10,8 +10,7 @@ interface DashboardContentProps {
   initialized: boolean;
   handler: {
     cardHandler: {
-      reserve(product: Product): Promise<Product>;
-      unReserve(product: Product): Promise<Product>;
+      toggleReserve(product: Product): Promise<Product>;
     };
   };
 }

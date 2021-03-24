@@ -33,8 +33,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
 
   private handler = {
     cardHandler: {
-      reserve: this.handleReserve,
-      unReserve: this.handleUnreserve,
+      toggleReserve: this.handleToggleReserve,
     },
   };
 
@@ -121,14 +120,15 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     this.setState({ dialogStates: { addDialog: { open: true } } });
   }
 
-  async handleReserve(product: Product): Promise<Product> {
-    Dashboard.log.warn('TODO: Implement');
-    return Promise.resolve(product);
-  }
-
-  async handleUnreserve(product: Product): Promise<Product> {
-    Dashboard.log.warn('TODO: Implement');
-    return Promise.resolve(product);
+  // Pack checking logic into service
+  async handleToggleReserve(product: Product): Promise<Product> {
+    return FirebaseService.toggleReserve(product)
+      .then((x) => {
+        return Promise.resolve(x);
+      })
+      .catch((x) => {
+        return Promise.reject(x);
+      });
   }
 
   render(): JSX.Element {
