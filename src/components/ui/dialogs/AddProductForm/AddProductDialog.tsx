@@ -58,7 +58,6 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
   const classes = useStyles();
 
   const [isLoading, setLoading] = useState(false);
-  const [currency, setCurrency] = useState(currencies[0].value);
   const [confirmLeaveOpen, setConfirmLeave] = useState(false);
 
   // Form Inputs
@@ -67,6 +66,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
   const [descriptionValue, setDescriptionValue] = useState('');
   const [linkValue, setLinkValue] = useState('');
   const [imageValue, setImageValue] = useState('');
+  const [currency, setCurrency] = useState(currencies[0].value);
 
   async function sendChanges(product: Product): Promise<Product> {
     return await FirebaseService.addItem(product)
@@ -92,8 +92,11 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
     const product: Product = {
       id: 0,
       name: nameValue,
-      price: Number(priceValue),
+      price: parseFloat(priceValue),
       isReserved: false,
+      currency: currencies.find((x) => {
+        return x.value === currency;
+      }),
     };
 
     descriptionValue !== '' && (product.description = descriptionValue);
@@ -186,6 +189,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
         variant="outlined"
         fullWidth
         disabled={isLoading}
+        onChange={(x) => setPriceValue(x.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -209,6 +213,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
         rowsMax="5"
         fullWidth
         disabled={isLoading}
+        onChange={(x) => setDescriptionValue(x.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -229,6 +234,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
         label="Link (optional)"
         fullWidth
         disabled={isLoading}
+        onChange={(x) => setLinkValue(x.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -248,6 +254,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
         variant="outlined"
         fullWidth
         disabled
+        onChange={(x) => setImageValue(x.target.value)}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -312,10 +319,10 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
                   Required
                 </Typography>
               </Grid>
-              <Grid item xs={8}>
+              <Grid item xs={12} md={8}>
                 {nameTextfield()}
               </Grid>
-              <Grid item xs={4}>
+              <Grid item xs={12} md={4}>
                 {priceTextfield()}
               </Grid>
               <Grid item xs={12}>
