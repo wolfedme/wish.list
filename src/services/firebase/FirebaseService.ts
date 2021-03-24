@@ -9,7 +9,7 @@ import * as convars from 'configs/convars.json';
 import { Product } from 'types/data/productType';
 
 class FirebaseService {
-  log = jsLogger.get('FirebaseService');
+  private static log = jsLogger.get('FirebaseService');
   // Singleton
   private static classInstance?: FirebaseService;
 
@@ -37,7 +37,7 @@ class FirebaseService {
       authState: 'none',
     };
 
-    this.log.debug('Firebase Service initialized.');
+    FirebaseService.log.debug('Firebase Service initialized.');
     FirebaseService.initialized = true;
 
     convars.firebase.auto_anonymous_signin && this.signInAnonymously();
@@ -48,9 +48,9 @@ class FirebaseService {
   async signInAnonymously() {
     // Check if user is already authenticated
     const currentUser = this.provider.auth.currentUser;
-    this.log.debug({ currentUser });
+    FirebaseService.log.debug({ currentUser });
     if (currentUser) {
-      this.log.debug('Already signed in, skipping function');
+      FirebaseService.log.debug('Already signed in, skipping function');
       return 0;
     }
 
@@ -59,13 +59,13 @@ class FirebaseService {
       .signInAnonymously()
       .then(() => {
         this.provider.auth.onAuthStateChanged((user) => {
-          user && this.log.debug(`User with id '${user.uid}' signed in anonymously`);
+          user && FirebaseService.log.debug(`User with id '${user.uid}' signed in anonymously`);
           user && (this.provider.authState = 'anon');
         });
       })
       .catch((err: app.FirebaseError) => {
-        this.log.debug(`Error while signing in: ${err.code}`);
-        this.log.error(`${err.message}`);
+        FirebaseService.log.debug(`Error while signing in: ${err.code}`);
+        FirebaseService.log.error(`${err.message}`);
         return 0;
       });
 
@@ -73,7 +73,7 @@ class FirebaseService {
   }
 
   public signInUser() {
-    this.log.warn('TODO: Implement');
+    FirebaseService.log.warn('TODO: Implement');
   }
 
   public getUser() {
@@ -82,7 +82,7 @@ class FirebaseService {
   }
 
   public async getProductsOnce(): Promise<Product[]> {
-    this.log.debug(`getProductsOnce() at path ${this.fullPath}`);
+    FirebaseService.log.debug(`getProductsOnce() at path ${this.fullPath}`);
     return this.provider.db
       .ref(this.fullPath)
       .once('value')
@@ -91,37 +91,37 @@ class FirebaseService {
         value.forEach((x) => {
           arr.push(x.val());
         });
-        this.log.debug(`Found ${arr.length} products: `, arr);
+        FirebaseService.log.debug(`Found ${arr.length} products: `, arr);
         return Promise.resolve(arr);
       })
       .catch((err: app.FirebaseError) => {
-        this.log.error(err.message);
+        FirebaseService.log.error(err.message);
         return Promise.reject(err);
       });
   }
 
   public fetchProductReference(id: number): app.database.Reference {
-    this.log.debug(`fetchReference(${id}) at path ${this.fullPath}${id}`);
+    FirebaseService.log.debug(`fetchReference(${id}) at path ${this.fullPath}${id}`);
     return this.provider.db.ref(`${this.fullPath}${id}/`);
   }
 
   public fetchWholeReference(): app.database.Reference {
-    this.log.debug(`fetchReference for products at ${this.fullPath}`);
+    FirebaseService.log.debug(`fetchReference for products at ${this.fullPath}`);
     return this.provider.db.ref(`${this.fullPath}`);
   }
 
   public updateItem(data: Product) {
-    this.log.warn('TODO: Implement');
+    FirebaseService.log.warn('TODO: Implement');
   }
 
   public async addItem(data: Product): Promise<Product> {
     // TODO: Validate
     if (!data) {
-      this.log.debug('addItem() called with empty product');
+      FirebaseService.log.debug('addItem() called with empty product');
       return Promise.reject({ message: 'Product empty' });
     }
 
-    this.log.debug(`addItem(${data}) called`);
+    FirebaseService.log.debug(`addItem(${data}) called`);
 
     // Validate
     // typeof etc.
@@ -132,21 +132,21 @@ class FirebaseService {
     return await pushRef
       .set(toPush)
       .then((_) => {
-        this.log.debug(`Pushed product with generated id ${toPush.id}`);
+        FirebaseService.log.debug(`Pushed product with generated id ${toPush.id}`);
         return Promise.resolve(toPush);
       })
       .catch((x: Error) => {
-        this.log.error({ message: `Error while pushing: ${x.message}` });
+        FirebaseService.log.error({ message: `Error while pushing: ${x.message}` });
         return Promise.reject(x);
       });
   }
 
   public removeItem(id: number) {
-    this.log.warn('TODO: Implement');
+    FirebaseService.log.warn('TODO: Implement');
   }
 
   public removeBulk(ids: number[]) {
-    this.log.warn('TODO: Implement');
+    FirebaseService.log.warn('TODO: Implement');
   }
 }
 
