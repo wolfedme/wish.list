@@ -34,7 +34,6 @@ class FirebaseService {
       app: app.app(),
       db: app.database(),
       auth: app.auth(),
-      authState: 'none',
     };
 
     FirebaseService.log.debug('Firebase Service initialized.');
@@ -60,7 +59,6 @@ class FirebaseService {
       .then(() => {
         this.provider.auth.onAuthStateChanged((user) => {
           user && FirebaseService.log.debug(`User with id '${user.uid}' signed in anonymously`);
-          user && (this.provider.authState = 'anon');
         });
       })
       .catch((err: app.FirebaseError) => {

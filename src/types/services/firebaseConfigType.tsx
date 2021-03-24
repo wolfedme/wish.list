@@ -14,5 +14,4 @@ export interface firebaseProvider {
   app: app.app.App;
   db: app.database.Database;
   auth: app.auth.Auth;
-  authState: 'none' | 'anon' | 'admin';
 }
