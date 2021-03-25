@@ -58,49 +58,53 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     Dashboard.log.debug(`Initializing`);
     this.setState({ isLoading: true });
 
-    FirebaseService.getProductsOnce()
-      .then((arr) => {
-        arr && this.setState({ products: arr });
-        Dashboard.log.debug(`Successfully fetched ${arr.length} products.`);
-        Dashboard.log.debug(arr);
-        this.setState({ initialized: true });
-      })
-      .catch((err) => {
-        Dashboard.log.error(err.message);
+    Dashboard.log.debug('Waiting for anonymous sign in');
+    FirebaseService.provider.auth.onAuthStateChanged((x) => {
+      Dashboard.log.debug('AuthState has changed', x);
+      FirebaseService.getProductsOnce()
+        .then((arr) => {
+          arr && this.setState({ products: arr });
+          Dashboard.log.debug(`Successfully fetched ${arr.length} products.`);
+          Dashboard.log.debug(arr);
+          this.setState({ initialized: true });
+        })
+        .catch((err) => {
+          Dashboard.log.error(err.message);
+        });
+
+      // Setup onChildChange
+      const ref = FirebaseService.fetchWholeReference();
+      ref.on('child_added', (x) => {
+        const value: Product = x.val() as Product;
+        Dashboard.log.debug('child_added ', value);
+        this.setState({ products: [...this.state.products, value] });
+        //TODO: Animate Card in
       });
 
-    // Setup onChildChange
-    const ref = FirebaseService.fetchWholeReference();
-    ref.on('child_added', (x) => {
-      const value: Product = x.val() as Product;
-      Dashboard.log.debug('child_added ', value);
-      this.setState({ products: [...this.state.products, value] });
-      //TODO: Animate Card in
-    });
+      ref.on('child_changed', (x) => {
+        const value: Product = x.val() as Product;
+        Dashboard.log.debug('child_changed ', value);
 
-    ref.on('child_changed', (x) => {
-      const value: Product = x.val() as Product;
-      Dashboard.log.debug('child_changed ', value);
-
-      const i = this.state.products.findIndex((obj) => {
-        return obj.id === value.id;
+        const i = this.state.products.findIndex((obj) => {
+          return obj.id === value.id;
+        });
+        if (i === -1) {
+          Dashboard.log.error('CRITICAL\nchild_changed does not exist or ID has changed.', value);
+          return;
+        }
+        const items = [...this.state.products];
+        items[i] = { ...value };
+        this.setState({ products: items });
       });
-      if (i === -1) {
-        Dashboard.log.error('CRITICAL\nchild_changed does not exist or ID has changed.', value);
-        return;
-      }
-      const items = [...this.state.products];
-      items[i] = { ...value };
-      this.setState({ products: items });
-    });
 
-    ref.on('child_removed', (x) => {
-      const value: Product = x.val() as Product;
-      Dashboard.log.debug('child_removed ', value);
-      Dashboard.log.warn('TODO: Implement child_removed');
-    });
+      ref.on('child_removed', (x) => {
+        const value: Product = x.val() as Product;
+        Dashboard.log.debug('child_removed ', value);
+        Dashboard.log.warn('TODO: Implement child_removed');
+      });
 
-    this.setState({ isLoading: false });
+      this.setState({ isLoading: false });
+    });
   }
 
   componentWillUnmount(): void {
