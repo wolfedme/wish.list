@@ -8,6 +8,9 @@ import { firebaseProvider } from 'types/services/firebaseConfigType';
 import * as convars from 'configs/convars.json';
 import { Product } from 'types/data/productType';
 
+// TODO: Validate Rules in Firebase
+// TODO: Export finished Firebase Configuration & add to repo
+// TODO: Database Name conflicts with rule set!
 class FirebaseService {
   private static log = jsLogger.get('FirebaseService');
   // Singleton
@@ -39,16 +42,17 @@ class FirebaseService {
     FirebaseService.log.debug('Firebase Service initialized.');
     FirebaseService.initialized = true;
 
-    convars.firebase.auto_anonymous_signin && this.signInAnonymously();
+    convars.firebase.auto_anonymous_signin &&
+      this.provider.auth.currentUser &&
+      this.signInAnonymously();
 
     FirebaseService.classInstance = this;
   }
 
   async signInAnonymously() {
     // Check if user is already authenticated
-    const currentUser = this.provider.auth.currentUser;
-    FirebaseService.log.debug({ currentUser });
-    if (currentUser) {
+    FirebaseService.log.debug('signInAnonymously called');
+    if (this.provider.auth.currentUser) {
       FirebaseService.log.debug('Already signed in, skipping function');
       return 0;
     }
@@ -70,14 +74,44 @@ class FirebaseService {
     return 1;
   }
 
-  public signInUser() {
-    FirebaseService.log.warn('TODO: Implement');
+  public async signInUser(user: string, password: string): Promise<app.User | null> {
+    if (!user || !password || user === '' || password === '')
+      return Promise.reject({ message: 'User or Password empty.' });
+    return await this.provider.auth
+      .signInWithEmailAndPassword(user, password)
+      .then((x) => {
+        return Promise.resolve(x.user);
+      })
+      .catch((x) => {
+        return Promise.reject(x);
+      })
+      .finally(() => {
+        FirebaseService.log.debug(
+          `Current auth status after attempted login - `,
+          this.provider.auth.currentUser,
+        );
+      });
   }
 
-  public getUser() {
+  public async signOut(): Promise<app.User | null> {
+    if (this.provider.auth.currentUser?.isAnonymous)
+      Promise.reject({ message: 'Already signed out' });
+
+    return await this.provider.auth.signOut().then(() => {
+      return this.signInAnonymously().then(() => {
+        return Promise.resolve(this.provider.auth.currentUser);
+      });
+    });
+  }
+
+  public getUserID() {
     // TODO: Reduce calls and store uid in variable
     const uid = this.provider.auth.currentUser?.uid;
     return uid ? uid : 'none';
+  }
+
+  public getIsAnon() {
+    return this.provider.auth.currentUser?.isAnonymous;
   }
 
   public async getProductsOnce(): Promise<Product[]> {
@@ -125,7 +159,7 @@ class FirebaseService {
       );
     }
 
-    if (data.isReserved && data.reservedBy && data.reservedBy !== this.getUser()) {
+    if (data.isReserved && data.reservedBy && data.reservedBy !== this.getUserID()) {
       return Promise.reject(
         new Error("Cannot undo reserve, product's ReservedBy differs from current UserID"),
       );
@@ -134,21 +168,34 @@ class FirebaseService {
     const updatedProduct = { ...data };
     updatedProduct.isReserved = !updatedProduct.isReserved;
 
+    const promises = [];
+    promises.push(
+      dbData.child('isReserved').transaction((x) => {
+        return !data.isReserved;
+      }),
+    );
+
     if (!data.isReserved) {
-      updatedProduct.reservedBy = this.getUser();
+      promises.push(
+        dbData.child('reservedBy').transaction((x) => {
+          return this.getUserID();
+        }),
+      );
+      updatedProduct.reservedBy = this.getUserID();
+    } else {
+      promises.push(
+        dbData.child('reservedBy').transaction((x) => {
+          return '';
+        }),
+      );
     }
 
-    if (data.isReserved) {
-      updatedProduct.reservedBy && delete updatedProduct.reservedBy;
-    }
-
-    return dbData
-      .set(updatedProduct)
+    return Promise.all(promises)
       .then((x) => {
-        return Promise.resolve(x);
+        return Promise.resolve((x as unknown) as Product);
       })
       .catch((x) => {
-        return Promise.reject(x);
+        return Promise.reject((x as unknown) as Product);
       });
   }
 
@@ -167,6 +214,7 @@ class FirebaseService {
     const toPush = data;
     toPush.id = new Date().getTime();
     const pushRef = this.provider.db.ref(this.fullPath + toPush.id + '/');
+
     return await pushRef
       .set(toPush)
       .then((_) => {

@@ -7,6 +7,7 @@ import createStyles from '@material-ui/core/styles/createStyles';
 
 interface DashboardActionsProps {
   openAddHandler(): void;
+  isSignedIn: boolean;
 }
 
 const useStyles = makeStyles((theme) =>
@@ -41,7 +42,9 @@ export default function DashboardActions(props: DashboardActionsProps): JSX.Elem
 
   return (
     <div>
-      <AddFab openAddHandler={props.openAddHandler} className={classes.addFab}></AddFab>
+      {props.isSignedIn && (
+        <AddFab openAddHandler={props.openAddHandler} className={classes.addFab} />
+      )}
     </div>
   );
 }

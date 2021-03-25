@@ -49,8 +49,7 @@ const useStyles = makeStyles((theme) =>
 );
 
 // TODO: To Class Component
-
-// TODO: Products get pushed to wrong path
+// TODO: VALIDATION!
 
 export default function AddProductModal(props: AddProductDialogProps): JSX.Element {
   const log = jsLogger.get('AddProductDialog');
@@ -149,12 +148,15 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
         value={nameValue}
         onChange={(x) => setNameValue(x.target.value)}
         disabled={isLoading}
+        autoFocus
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
               <LayersIcon />
             </InputAdornment>
           ),
+          type: 'text',
+          required: true,
         }}
       />
     );
@@ -196,6 +198,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
               <MonetizationOnIcon />
             </InputAdornment>
           ),
+          type: 'number',
           endAdornment: <InputAdornment position="end">{pricePicker()}</InputAdornment>,
         }}
       />

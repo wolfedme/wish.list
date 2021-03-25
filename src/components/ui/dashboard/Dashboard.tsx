@@ -8,6 +8,8 @@ import HeaderBar from './HeaderBar';
 import AddProductDialog from 'components/ui/dialogs/AddProductForm/AddProductDialog';
 import DashboardActions from './DashboardActions';
 
+import LoginDialog from 'components/ui/dialogs/LoginDialog';
+
 import { Container } from '@material-ui/core';
 import { Product } from 'types/data/productType';
 
@@ -16,18 +18,15 @@ interface DashboardState {
   products: Product[];
   isLoading: boolean;
   initialized: boolean;
-  dialogStates: {
-    addDialog: {
-      open: boolean;
-    };
+  addDialog: {
+    open: boolean;
+  };
+  loginDialog: {
+    open: boolean;
   };
 }
 export default class Dashboard extends Component<DashboardProps, DashboardState> {
-  /*
-  TODO:
-    - Add empty "nothin is here" component if no products are present
-
-  */
+  // TODO: Add empty "nothin is here" component if no products are present
 
   private static log = jsLogger.get('Dashboard');
 
@@ -43,15 +42,19 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
       products: [],
       initialized: false,
       isLoading: false,
-      dialogStates: {
-        addDialog: {
-          open: false,
-        },
+      addDialog: {
+        open: false,
+      },
+      loginDialog: {
+        open: false,
       },
     };
 
     this.handleAddDialogClose = this.handleAddDialogClose.bind(this);
     this.handleAddDialogOpen = this.handleAddDialogOpen.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
+    this.toggleLoginDialog = this.toggleLoginDialog.bind(this);
   }
 
   componentDidMount(): void {
@@ -113,20 +116,47 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     ref.off();
   }
 
+  async handleLogin(user: string, pass: string): Promise<void> {
+    FirebaseService.signInUser(user, pass)
+      .then(() => {
+        return Promise.resolve();
+      })
+      .catch((x) => {
+        Dashboard.log.error('Error while signing in: ', x);
+        return Promise.reject(x);
+      });
+  }
+
+  async handleLogout(): Promise<void> {
+    FirebaseService.signOut()
+      .then(() => {
+        return Promise.resolve();
+      })
+      .catch((x) => {
+        Dashboard.log.error('Error while signing in: ', x);
+        return Promise.reject(x);
+      });
+  }
+
   // TODO: Maybe to toggle?
   handleAddDialogClose(): void {
     Dashboard.log.debug('Closed AddProductDialog');
-    this.setState({ dialogStates: { addDialog: { open: false } } });
+    this.setState({ addDialog: { open: false } });
   }
 
   handleAddDialogOpen(): void {
     Dashboard.log.debug('Opened AddProductDialog');
-    this.setState({ dialogStates: { addDialog: { open: true } } });
+    this.setState({ addDialog: { open: true } });
+  }
+
+  toggleLoginDialog(): void {
+    Dashboard.log.debug('Toggled LoginDialog');
+    this.setState({ loginDialog: { open: !this.state.loginDialog.open } });
   }
 
   // Pack checking logic into service
   async handleToggleReserve(product: Product): Promise<Product> {
-    return FirebaseService.toggleReserve(product)
+    return FirebaseService.toggleReserve({ ...product })
       .then((x) => {
         return Promise.resolve(x);
       })
@@ -139,10 +169,18 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     return (
       <React.Fragment>
         <AddProductDialog
-          isOpen={this.state.dialogStates.addDialog.open}
+          isOpen={this.state.addDialog.open}
           handleClose={this.handleAddDialogClose}
         />
-        <HeaderBar />
+        <LoginDialog
+          isOpen={this.state.loginDialog.open}
+          closeHandler={this.toggleLoginDialog}
+          handleLogin={this.handleLogin}
+        />
+        <HeaderBar
+          handler={{ toggleLoginHandler: this.toggleLoginDialog, logoutHandler: this.handleLogout }}
+          isLoggedIn={!FirebaseService.getIsAnon() && FirebaseService.getUserID !== undefined}
+        />
         <Container maxWidth="lg">
           <DashboardContent
             initialized={this.state.initialized}
@@ -150,7 +188,10 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
             handler={this.handler}
           />
         </Container>
-        <DashboardActions openAddHandler={this.handleAddDialogOpen} />
+        <DashboardActions
+          isSignedIn={!FirebaseService.getIsAnon()}
+          openAddHandler={this.handleAddDialogOpen}
+        />
       </React.Fragment>
     );
   }

@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function ProductCard(props: ProductCardProps): JSX.Element {
   const classes = useStyles();
-  const userID = FirebaseService.getUser();
+  const userID = FirebaseService.getUserID();
 
   const log = jsLogger.get(`productCard #${props.product.id}`);
 
@@ -89,7 +89,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
     log.debug('Started toggle');
     setButtonLoading(true);
     props.handler
-      .toggleReserve(props.product)
+      .toggleReserve({ ...props.product })
       .catch((x) => {
         log.debug('Error while toggling: ', x.message);
       })
