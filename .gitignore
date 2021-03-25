@@ -127,3 +127,5 @@ src/globals/firebase/config.js
 src/globals/firebase/FirebaseConfig.tsx
 
 src/globals/firebase/config.tsx
+
+build/*
