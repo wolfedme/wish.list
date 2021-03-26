@@ -108,7 +108,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
         const value: Product = x.val() as Product;
         Dashboard.log.debug('child_removed ', value);
         const newArray = [...this.state.products].filter((x) => {
-          return x !== value;
+          return x.id !== value.id;
         });
         this.setState({ products: [...newArray] });
       });
