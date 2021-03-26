@@ -25,6 +25,9 @@ interface DashboardState {
     open: boolean;
   };
 }
+
+// TODO: Severe Errors & Success to Snackbar
+// TODO: Pagination
 export default class Dashboard extends Component<DashboardProps, DashboardState> {
   // TODO: Add empty "nothin is here" component if no products are present
 
@@ -61,9 +64,10 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
     Dashboard.log.debug(`Initializing`);
     this.setState({ isLoading: true });
 
-    Dashboard.log.debug('Waiting for anonymous sign in');
+    Dashboard.log.debug('Waiting for sign in');
     FirebaseService.provider.auth.onAuthStateChanged((x) => {
       Dashboard.log.debug('AuthState has changed', x);
+      Dashboard.log.debug(FirebaseService.isAdmin() ? 'User is admin' : 'User is guest');
       FirebaseService.getProductsOnce()
         .then((arr) => {
           arr && this.setState({ products: arr });
@@ -103,7 +107,10 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
       ref.on('child_removed', (x) => {
         const value: Product = x.val() as Product;
         Dashboard.log.debug('child_removed ', value);
-        Dashboard.log.warn('TODO: Implement child_removed');
+        const newArray = [...this.state.products].filter((x) => {
+          return x !== value;
+        });
+        this.setState({ products: [...newArray] });
       });
 
       this.setState({ isLoading: false });
@@ -179,7 +186,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
         />
         <HeaderBar
           handler={{ toggleLoginHandler: this.toggleLoginDialog, logoutHandler: this.handleLogout }}
-          isLoggedIn={!FirebaseService.getIsAnon() && FirebaseService.getUserID !== undefined}
+          isLoggedIn={!FirebaseService.isAnon() && FirebaseService.getUserID !== undefined}
         />
         <Container maxWidth="lg">
           <DashboardContent
@@ -189,7 +196,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
           />
         </Container>
         <DashboardActions
-          isSignedIn={!FirebaseService.getIsAnon()}
+          isSignedIn={!FirebaseService.isAnon()}
           openAddHandler={this.handleAddDialogOpen}
           disableButtons={!this.state.initialized}
         />
