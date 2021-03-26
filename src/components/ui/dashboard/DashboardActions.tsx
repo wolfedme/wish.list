@@ -8,6 +8,7 @@ import createStyles from '@material-ui/core/styles/createStyles';
 interface DashboardActionsProps {
   openAddHandler(): void;
   isSignedIn: boolean;
+  disableButtons: boolean;
 }
 
 const useStyles = makeStyles((theme) =>

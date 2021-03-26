@@ -191,6 +191,7 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
         <DashboardActions
           isSignedIn={!FirebaseService.getIsAnon()}
           openAddHandler={this.handleAddDialogOpen}
+          disableButtons={!this.state.initialized}
         />
       </React.Fragment>
     );
