@@ -110,8 +110,12 @@ class FirebaseService {
     return uid ? uid : 'none';
   }
 
-  public getIsAnon() {
+  public isAnon() {
     return this.provider.auth.currentUser?.isAnonymous;
+  }
+
+  public isAdmin() {
+    return this.provider.auth.currentUser && !this.provider.auth.currentUser?.isAnonymous;
   }
 
   public async getProductsOnce(): Promise<Product[]> {
