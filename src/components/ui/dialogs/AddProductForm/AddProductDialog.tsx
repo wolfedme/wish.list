@@ -119,7 +119,11 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
   }
 
   function toggleLeaveDialog(): void {
-    !isLoading ? setConfirmLeave(!confirmLeaveOpen) : setConfirmLeave(false);
+    nameValue === ''
+      ? props.handleClose()
+      : !isLoading
+      ? setConfirmLeave(!confirmLeaveOpen)
+      : setConfirmLeave(false);
   }
 
   function closeDialog(): void {
