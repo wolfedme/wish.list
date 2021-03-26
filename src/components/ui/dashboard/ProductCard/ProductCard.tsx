@@ -26,6 +26,7 @@ import jsLogger from 'js-logger';
 import Tooltip from '@material-ui/core/Tooltip';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
+import { lime } from '@material-ui/core/colors';
 
 interface ProductCardProps {
   isSkeleton?: boolean;
@@ -80,6 +81,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ProductCard(props: ProductCardProps): JSX.Element {
   const classes = useStyles();
   const userID = FirebaseService.getUserID();
+  const isAdmin = FirebaseService.isAdmin();
 
   const log = jsLogger.get(`productCard #${props.product.id}`);
 
@@ -189,7 +191,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
 
     // TODO: Simplify
     const reserveButton = () => {
-      if (reservedByUser()) {
+      if (reservedByUser() || (isAdmin && props.product.isReserved)) {
         return (
           <Button
             className={classes.reserveButton}
@@ -229,7 +231,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
           disableElevation
           onClick={() => handleToggleReserve()}
           size="large"
-          disabled={buttonLoading}
+          disabled={isAdmin || buttonLoading}
           startIcon={!buttonLoading ? <CheckCircleIcon /> : <CircularProgress size={24} />}
         >
           Reserve
@@ -269,7 +271,14 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
       <Card
         className={classes.root}
         variant={props.product.isReserved ? 'outlined' : 'elevation'}
-        style={props.product.isReserved ? { backgroundColor: grey[200] } : undefined}
+        style={
+          props.product.reservedBy === userID
+            ? { borderColor: lime[500] }
+            : props.product.isReserved
+            ? { backgroundColor: grey[200] }
+            : undefined
+        }
+        raised={!props.product.isReserved}
       >
         {cardHeader()}
         {cardMedia()}

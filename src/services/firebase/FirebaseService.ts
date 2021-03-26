@@ -153,17 +153,14 @@ class FirebaseService {
 
   public async toggleReserve(data: Product): Promise<Product> {
     const dbData = this.provider.db.ref(`${this.fullPath}/${data.id}`);
-    const dbObject: Product = (await dbData.once('value')).val();
 
-    //TODO: Delete reservedBy
-
-    if (data.isReserved !== dbObject.isReserved) {
-      return Promise.reject(
-        new Error('Cannot toggle, product isReserved differs from database state'),
-      );
-    }
-
-    if (data.isReserved && data.reservedBy && data.reservedBy !== this.getUserID()) {
+    if (
+      !this.isAdmin() &&
+      data.isReserved &&
+      data.reservedBy &&
+      data.reservedBy !== this.getUserID()
+    ) {
+      FirebaseService.log.debug(`isAdmin: ${this.isAdmin()}`);
       return Promise.reject(
         new Error("Cannot undo reserve, product's ReservedBy differs from current UserID"),
       );
@@ -189,7 +186,7 @@ class FirebaseService {
     } else {
       promises.push(
         dbData.child('reservedBy').transaction((x) => {
-          return '';
+          return null;
         }),
       );
     }

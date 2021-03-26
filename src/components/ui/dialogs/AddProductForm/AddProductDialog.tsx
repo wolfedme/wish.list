@@ -49,7 +49,9 @@ const useStyles = makeStyles((theme) =>
 );
 
 // TODO: To Class Component
+//  - TODO: Refactor to composite component
 // TODO: VALIDATION!
+//  - TODO: Check for empty textfields
 
 export default function AddProductModal(props: AddProductDialogProps): JSX.Element {
   const log = jsLogger.get('AddProductDialog');
@@ -78,15 +80,7 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
         return Promise.reject(x);
       });
   }
-
-  // TODO: Check for empty textfields
-  // TODO: Validate textfields
   function sendChangesHandler(): void {
-    // TODO: Price not parsed correctly
-    // TODO: Currency not saved
-    // TODO: Check more missing types
-    // TODO: Breakpoints for textfields
-
     setLoading(true);
     const product: Product = {
       id: 0,
