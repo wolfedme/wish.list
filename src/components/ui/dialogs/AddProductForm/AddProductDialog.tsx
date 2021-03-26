@@ -253,6 +253,27 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
     );
   };
 
+  // TODO: Choose between URL or Upload
+
+  const imageURLTextfield = () => {
+    return (
+      <TextField
+        label="Image URL"
+        defaultValue="TODO"
+        variant="outlined"
+        fullWidth
+        onChange={(x) => setImageValue(x.target.value)}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <ImageIcon />
+            </InputAdornment>
+          ),
+        }}
+      />
+    );
+  };
+
   const uploadImageTextfield = () => {
     return (
       <TextField
@@ -342,6 +363,9 @@ export default function AddProductModal(props: AddProductDialogProps): JSX.Eleme
               </Grid>
               <Grid item xs={12}>
                 {descriptionTextfield()}
+              </Grid>
+              <Grid item xs={12}>
+                {imageURLTextfield()}
               </Grid>
               <Grid item xs={12}>
                 {uploadImageTextfield()}
