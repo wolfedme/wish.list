@@ -43,7 +43,7 @@ class FirebaseService {
     FirebaseService.initialized = true;
 
     convars.firebase.auto_anonymous_signin &&
-      this.provider.auth.currentUser &&
+      !this.provider.auth.currentUser &&
       this.signInAnonymously();
 
     FirebaseService.classInstance = this;
