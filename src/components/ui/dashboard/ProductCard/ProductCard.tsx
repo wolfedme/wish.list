@@ -191,7 +191,7 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
 
     // TODO: Simplify
     const reserveButton = () => {
-      if (reservedByUser() || (isAdmin && props.product.isReserved)) {
+      if ((props.product.isReserved && reservedByUser()) || (isAdmin && props.product.isReserved)) {
         return (
           <Button
             className={classes.reserveButton}
