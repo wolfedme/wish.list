@@ -1,4 +1,4 @@
-import { CircularProgress } from '@material-ui/core';
+import { CircularProgress, Link } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -242,7 +242,13 @@ export default function ProductCard(props: ProductCardProps): JSX.Element {
     const linkButton = () => {
       const disabled = !props.product.link || props.product.link === '';
       return (
-        <Button disabled={disabled} startIcon={<BusinessIcon />}>
+        <Button
+          disabled={disabled}
+          startIcon={<BusinessIcon />}
+          onClick={() => {
+            props.product.link && window.open(props.product.link, '_blank');
+          }}
+        >
           Website
         </Button>
       );
