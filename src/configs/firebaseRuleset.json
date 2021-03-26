@@ -1,0 +1,23 @@
+{
+    "rules": {
+      ".read": "auth.uid != null",
+      ".write": "auth.provider == 'password' && auth.uid != null",
+      "mainDB": {
+        "products": {
+          ".write": "auth.provider == 'password' && auth.uid != null",
+          "$productID": {
+            "isReserved": {
+              ".write": "(auth.uid != null && root.child('mainDB').child('products').child($productID).child('isReserved').val() === false) || 
+              ((root.child('mainDB').child('products').child($productID).child('isReserved').val() === true && auth.uid === root.child('mainDB').child('products').child($productID).child('reservedBy').val()) || 
+              auth.provider == 'password' && auth.uid != null)"
+            },
+            "reservedBy": {
+              ".write": "auth.provider == 'password' || 
+              (!root.child('mainDB').child('products').child($productID).child('reservedBy').exists()) || 
+              (auth.uid != null && root.child('mainDB').child('products').child($productID).child('reservedBy').exists() && auth.uid == root.child('mainDB').child('products').child($productID).child('reservedBy').val())"
+            }
+          }
+        }
+      }
+    }
+}
